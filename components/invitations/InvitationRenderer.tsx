@@ -31,11 +31,12 @@ interface InvitationRendererProps {
 
 export function InvitationRenderer({ event, template, guest }: InvitationRendererProps) {
   // 1. Resolve active theme
+  const rawThemeConfig = (event.theme_config as Record<string, any>) || (template?.default_theme as Record<string, any>) || {};
+
   const theme = React.useMemo(() => {
     const templateSlug = template?.slug || (event as any).template_slug;
-    const rawThemeConfig = (event.theme_config as Record<string, any>) || (template?.default_theme as Record<string, any>);
     return resolveTheme(templateSlug, rawThemeConfig);
-  }, [template, event.theme_config]);
+  }, [template, rawThemeConfig]);
 
   // 2. Resolve active sections and their order
   const sections = React.useMemo(() => {
@@ -81,41 +82,124 @@ export function InvitationRenderer({ event, template, guest }: InvitationRendere
     }).filter((s: SectionConfig) => s.enabled);
   }, [event.sections_config, template?.default_sections]);
 
+  // Merge theme_config custom section data with section.data
+  const getSectionData = (type: SectionType, explicitData: Record<string, any> = {}) => {
+    switch (type) {
+      case 'dress-code':
+        return {
+          type: rawThemeConfig.dress_code_type || rawThemeConfig.dress_code?.type,
+          description: rawThemeConfig.dress_code_description || rawThemeConfig.dress_code?.description,
+          colors: rawThemeConfig.dress_code_colors || rawThemeConfig.dress_code?.colors,
+          notes: rawThemeConfig.dress_code_notes || rawThemeConfig.dress_code?.notes,
+          ...explicitData,
+        };
+      case 'event-details':
+        return {
+          ceremonyTitle: rawThemeConfig.ceremony_title || rawThemeConfig.event_details?.ceremonyTitle,
+          ceremonyTime: rawThemeConfig.ceremony_time || rawThemeConfig.event_details?.ceremonyTime,
+          ceremonyAddress: rawThemeConfig.ceremony_address || rawThemeConfig.event_details?.ceremonyAddress,
+          partyTitle: rawThemeConfig.party_title || rawThemeConfig.event_details?.partyTitle,
+          partyTime: rawThemeConfig.party_time || rawThemeConfig.event_details?.partyTime,
+          partyAddress: rawThemeConfig.party_address || rawThemeConfig.event_details?.partyAddress,
+          ...explicitData,
+        };
+      case 'gifts':
+        return {
+          title: rawThemeConfig.gift_title || rawThemeConfig.gifts?.title,
+          description: rawThemeConfig.gift_description || rawThemeConfig.gifts?.description,
+          cbu: rawThemeConfig.cbu_cvu || rawThemeConfig.gifts?.cbu,
+          alias: rawThemeConfig.alias || rawThemeConfig.gifts?.alias,
+          bankName: rawThemeConfig.bank_name || rawThemeConfig.gifts?.bankName,
+          holderName: rawThemeConfig.account_holder || rawThemeConfig.gifts?.holderName,
+          externalRegistryUrl: rawThemeConfig.gift_registry_url || rawThemeConfig.gifts?.externalRegistryUrl,
+          ...explicitData,
+        };
+      case 'story':
+        return {
+          title: rawThemeConfig.story_title || rawThemeConfig.story?.title,
+          subtitle: rawThemeConfig.story_subtitle || rawThemeConfig.story?.subtitle,
+          milestones: rawThemeConfig.story_milestones || rawThemeConfig.story?.milestones,
+          ...explicitData,
+        };
+      case 'photo-album':
+        return {
+          title: rawThemeConfig.album_title || rawThemeConfig.photo_album?.title,
+          photos: rawThemeConfig.gallery_photos || rawThemeConfig.photo_album?.photos,
+          ...explicitData,
+        };
+      case 'music':
+        return {
+          musicUrl: event.music_url || rawThemeConfig.music_url || rawThemeConfig.music?.musicUrl,
+          songTitle: rawThemeConfig.music_title || rawThemeConfig.music?.songTitle,
+          ...explicitData,
+        };
+      case 'hero':
+        return {
+          customTitle: rawThemeConfig.hero_title || rawThemeConfig.hero?.customTitle,
+          customSubtitle: rawThemeConfig.hero_subtitle || rawThemeConfig.hero?.customSubtitle,
+          videoUrl: rawThemeConfig.hero_video_url || rawThemeConfig.hero?.videoUrl,
+          ...explicitData,
+        };
+      case 'godparents':
+        return {
+          title: rawThemeConfig.godparents_title || rawThemeConfig.godparents?.title,
+          members: rawThemeConfig.godparents_members || rawThemeConfig.godparents?.members,
+          ...explicitData,
+        };
+      case 'accommodation':
+        return {
+          title: rawThemeConfig.accommodation_title || rawThemeConfig.accommodation?.title,
+          hotels: rawThemeConfig.accommodation_hotels || rawThemeConfig.accommodation?.hotels,
+          ...explicitData,
+        };
+      case 'trivia':
+        return {
+          title: rawThemeConfig.trivia_title || rawThemeConfig.trivia?.title,
+          questions: rawThemeConfig.trivia_questions || rawThemeConfig.trivia?.questions,
+          ...explicitData,
+        };
+      default:
+        return { ...(rawThemeConfig[type] || {}), ...explicitData };
+    }
+  };
+
   // Render individual section by type
   const renderSection = (section: SectionConfig) => {
+    const data = getSectionData(section.type, section.data);
+
     switch (section.type) {
       case 'hero':
-        return <Hero key={section.id} theme={theme} event={event} guest={guest} data={section.data} />;
+        return <Hero key={section.id} theme={theme} event={event} guest={guest} data={data} />;
       case 'countdown':
-        return <Countdown key={section.id} theme={theme} event={event} data={section.data} />;
+        return <Countdown key={section.id} theme={theme} event={event} data={data} />;
       case 'event-details':
-        return <EventDetails key={section.id} theme={theme} event={event} data={section.data} />;
+        return <EventDetails key={section.id} theme={theme} event={event} data={data} />;
       case 'location':
-        return <LocationMap key={section.id} theme={theme} event={event} data={section.data} />;
+        return <LocationMap key={section.id} theme={theme} event={event} data={data} />;
       case 'dress-code':
-        return <DressCode key={section.id} theme={theme} event={event} data={section.data} />;
+        return <DressCode key={section.id} theme={theme} event={event} data={data} />;
       case 'story':
-        return <Story key={section.id} theme={theme} data={section.data} />;
+        return <Story key={section.id} theme={theme} data={data} />;
       case 'photo-album':
-        return <PhotoAlbum key={section.id} theme={theme} data={section.data} />;
+        return <PhotoAlbum key={section.id} theme={theme} data={data} />;
       case 'rsvp':
-        return <RsvpForm key={section.id} theme={theme} event={event} guest={guest} data={section.data} />;
+        return <RsvpForm key={section.id} theme={theme} event={event} guest={guest} data={data} />;
       case 'gifts':
-        return <Gifts key={section.id} theme={theme} data={section.data} />;
+        return <Gifts key={section.id} theme={theme} data={data} />;
       case 'music':
-        return <MusicPlayer key={section.id} theme={theme} event={event} data={section.data} />;
+        return <MusicPlayer key={section.id} theme={theme} event={event} data={data} />;
       case 'song-requests':
-        return <SongRequests key={section.id} theme={theme} event={event} data={section.data} />;
+        return <SongRequests key={section.id} theme={theme} event={event} data={data} />;
       case 'instagram-wall':
-        return <InstagramWall key={section.id} theme={theme} event={event} data={section.data} />;
+        return <InstagramWall key={section.id} theme={theme} event={event} data={data} />;
       case 'godparents':
-        return <Godparents key={section.id} theme={theme} data={section.data} />;
+        return <Godparents key={section.id} theme={theme} data={data} />;
       case 'accommodation':
-        return <Accommodation key={section.id} theme={theme} data={section.data} />;
+        return <Accommodation key={section.id} theme={theme} data={data} />;
       case 'trivia':
-        return <Trivia key={section.id} theme={theme} data={section.data} />;
+        return <Trivia key={section.id} theme={theme} data={data} />;
       case 'live-album-qr':
-        return <LiveAlbumQr key={section.id} theme={theme} event={event} data={section.data} />;
+        return <LiveAlbumQr key={section.id} theme={theme} event={event} data={data} />;
       default:
         return null;
     }

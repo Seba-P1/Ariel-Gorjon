@@ -32,7 +32,9 @@ import {
   Tv,
   Camera,
   Loader2,
+  Sliders,
 } from 'lucide-react';
+import { EVENT_TYPES } from '@/lib/constants';
 
 interface EventsManagerProps {
   initialEvents: (Tables<'events'> & {
@@ -50,10 +52,11 @@ export function EventsManager({ initialEvents, templates }: EventsManagerProps) 
   const [showCreateDialog, setShowCreateDialog] = React.useState(false);
   const [title, setTitle] = React.useState('');
   const [slug, setSlug] = React.useState('');
-  const [eventType, setEventType] = React.useState<'boda' | 'xv' | 'corporativo' | 'cumpleanos' | 'otro'>('boda');
+  const [eventType, setEventType] = React.useState<string>('boda');
   const [selectedTemplateId, setSelectedTemplateId] = React.useState<string>('');
   const [eventDate, setEventDate] = React.useState('');
   const [locationName, setLocationName] = React.useState('');
+  const [locationAddress, setLocationAddress] = React.useState('');
   const [isCreating, setIsCreating] = React.useState(false);
 
   // Delete State
@@ -95,10 +98,11 @@ export function EventsManager({ initialEvents, templates }: EventsManagerProps) 
         template_id: selectedTemplateId || null,
         event_date: eventDate || undefined,
         location_name: locationName.trim() || undefined,
+        location_address: locationAddress.trim() || undefined,
       });
 
       if (!res.ok) {
-        toast.error(res.error || 'Error al crear evento');
+        toast.error('Error al crear evento: ' + res.error);
         return;
       }
 
@@ -109,8 +113,8 @@ export function EventsManager({ initialEvents, templates }: EventsManagerProps) 
       } else {
         window.location.reload();
       }
-    } catch {
-      toast.error('Error al crear evento');
+    } catch (err: any) {
+      toast.error('Error inesperado: ' + err.message);
     } finally {
       setIsCreating(false);
     }
@@ -118,20 +122,21 @@ export function EventsManager({ initialEvents, templates }: EventsManagerProps) 
 
   const handleDelete = async () => {
     if (!deletingId) return;
+
     try {
       setIsDeleting(true);
       const res = await deleteEvent(deletingId);
 
       if (!res.ok) {
-        toast.error(res.error || 'Error al eliminar');
+        toast.error('Error al eliminar evento: ' + res.error);
         return;
       }
 
       setEvents((prev) => prev.filter((e) => e.id !== deletingId));
-      toast.success('Evento eliminado');
+      toast.success('Evento eliminado correctamente');
       setDeletingId(null);
-    } catch {
-      toast.error('Error al eliminar');
+    } catch (err: any) {
+      toast.error('Error al eliminar: ' + err.message);
     } finally {
       setIsDeleting(false);
     }
@@ -139,12 +144,12 @@ export function EventsManager({ initialEvents, templates }: EventsManagerProps) 
 
   return (
     <div className="space-y-6">
-      {/* Toolbar */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
-        <div className="relative flex-1 max-w-sm">
+      {/* Top Action Bar */}
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="relative w-full sm:w-80">
           <Search className="absolute left-3 top-2.5 h-4 w-4 text-neutral-500" />
           <Input
-            placeholder="Buscar eventos por título o slug..."
+            placeholder="Buscar por título, slug o salón..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-9 bg-neutral-900 border-neutral-800 text-sm"
@@ -152,100 +157,148 @@ export function EventsManager({ initialEvents, templates }: EventsManagerProps) 
         </div>
 
         <Button
-          onClick={() => setShowCreateDialog(true)}
-          className="bg-amber-500 hover:bg-amber-600 text-neutral-950 font-bold text-xs"
+          onClick={() => {
+            setTitle('');
+            setSlug('');
+            setEventType('boda');
+            setSelectedTemplateId(templates[0]?.id || '');
+            setEventDate('');
+            setLocationName('');
+            setLocationAddress('');
+            setShowCreateDialog(true);
+          }}
+          className="w-full sm:w-auto bg-amber-500 hover:bg-amber-600 text-neutral-950 font-bold shadow-lg shadow-amber-500/20"
         >
-          <Plus className="w-4 h-4 mr-1.5" />
+          <Plus className="w-4 h-4 mr-2" />
           Crear Nuevo Evento
         </Button>
       </div>
 
-      {/* Grid of Events */}
+      {/* Events Grid */}
       {filteredEvents.length === 0 ? (
-        <div className="py-20 text-center rounded-2xl border border-neutral-800 bg-neutral-900/30 text-neutral-500 text-sm">
-          No hay eventos creados todavía. Hacé click en "Crear Nuevo Evento".
-        </div>
+        <Card className="border-neutral-800 bg-neutral-900/40 p-12 text-center">
+          <Calendar className="w-12 h-12 text-neutral-600 mx-auto mb-3" />
+          <h3 className="text-base font-semibold text-neutral-300">No se encontraron eventos</h3>
+          <p className="text-xs text-neutral-500 mt-1 max-w-sm mx-auto">
+            {searchTerm
+              ? 'No hay eventos que coincidan con los criterios de búsqueda.'
+              : 'Todavía no creaste ningún evento. Creá el primero para empezar a diseñar invitaciones.'}
+          </p>
+        </Card>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {filteredEvents.map((event) => {
-            const dateStr = event.event_date
-              ? format(new Date(event.event_date), "d 'de' MMMM, yyyy", { locale: es })
-              : 'Fecha a definir';
+          {filteredEvents.map((evt) => {
+            const formattedDate = evt.event_date
+              ? format(new Date(evt.event_date), "d 'de' MMMM, yyyy", { locale: es })
+              : 'Sin fecha asignada';
 
             return (
               <Card
-                key={event.id}
-                className="bg-neutral-900/60 border-neutral-800 hover:border-amber-500/40 transition-all flex flex-col justify-between"
+                key={evt.id}
+                className="bg-neutral-900/60 border-neutral-800 hover:border-neutral-700 transition-all flex flex-col justify-between overflow-hidden shadow-lg"
               >
-                <CardContent className="p-6 space-y-4">
+                <div className="p-5 space-y-4">
                   <div className="flex items-start justify-between gap-2">
-                    <div>
-                      <Badge
-                        variant="outline"
-                        className="text-[10px] uppercase font-bold tracking-wider mb-2 bg-amber-500/10 text-amber-400 border-amber-500/30"
-                      >
-                        {event.event_type}
-                      </Badge>
-                      <h3 className="font-bold text-lg text-neutral-100 leading-snug">
-                        {event.title}
-                      </h3>
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <Badge
+                          variant="outline"
+                          className={
+                            evt.status === 'active'
+                              ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30 text-[10px]'
+                              : evt.status === 'draft'
+                              ? 'bg-amber-500/10 text-amber-400 border-amber-500/30 text-[10px]'
+                              : 'bg-neutral-500/10 text-neutral-400 border-neutral-500/30 text-[10px]'
+                          }
+                        >
+                          {evt.status === 'active' ? 'Activo' : evt.status === 'draft' ? 'Borrador' : 'Archivado'}
+                        </Badge>
+                        <span className="text-[11px] font-mono text-neutral-400">/{evt.slug}</span>
+                      </div>
+                      <h3 className="font-bold text-lg text-neutral-100 line-clamp-1">{evt.title}</h3>
                     </div>
-                    <Badge
-                      variant="outline"
-                      className={`text-[10px] ${
-                        event.status === 'active'
-                          ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
-                          : 'bg-neutral-800 text-neutral-400 border-neutral-700'
-                      }`}
-                    >
-                      {event.status === 'active' ? 'Activo' : 'Borrador'}
-                    </Badge>
                   </div>
 
                   <div className="space-y-1.5 text-xs text-neutral-400">
                     <div className="flex items-center gap-2">
                       <Calendar className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                      <span>{dateStr}</span>
+                      <span>{formattedDate}</span>
                     </div>
-                    {event.location_name && (
+
+                    {evt.location_name && (
                       <div className="flex items-center gap-2">
-                        <MapPin className="w-3.5 h-3.5 text-neutral-500 shrink-0" />
-                        <span className="truncate">{event.location_name}</span>
+                        <MapPin className="w-3.5 h-3.5 text-sky-400 shrink-0" />
+                        <span className="truncate">{evt.location_name}</span>
+                      </div>
+                    )}
+
+                    {evt.templates && (
+                      <div className="flex items-center gap-2 text-neutral-400">
+                        <span className="w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0" />
+                        <span className="truncate">Plantilla: {evt.templates.name}</span>
                       </div>
                     )}
                   </div>
+                </div>
 
-                  {/* Action Links */}
-                  <div className="pt-2 border-t border-neutral-800/80 flex items-center justify-between gap-2">
-                    <Link href={`/eventos/${event.id}`} className="flex-1">
-                      <Button size="sm" className="w-full bg-neutral-800 hover:bg-neutral-700 text-neutral-200 text-xs font-semibold">
-                        Administrar
+                <div className="p-4 bg-neutral-950/60 border-t border-neutral-800/80 space-y-2">
+                  <div className="grid grid-cols-2 gap-2">
+                    <Link href={`/eventos/${evt.id}`}>
+                      <Button
+                        variant="default"
+                        size="sm"
+                        className="w-full text-xs font-bold bg-amber-500 hover:bg-amber-600 text-neutral-950 rounded-xl"
+                      >
+                        <Sliders className="w-3.5 h-3.5 mr-1" />
+                        Personalizar
                       </Button>
                     </Link>
 
-                    <Link href={`/invitacion/${event.slug}`} target="_blank">
-                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-neutral-400 hover:text-amber-400" title="Ver Invitación">
-                        <Eye className="w-4 h-4" />
+                    <Link href={`/invitacion/${evt.slug}`} target="_blank">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="w-full text-xs font-semibold border-neutral-700 hover:bg-neutral-800 text-neutral-200 rounded-xl"
+                      >
+                        <Eye className="w-3.5 h-3.5 mr-1" />
+                        Ver Tarjeta
                       </Button>
                     </Link>
-
-                    <Link href={`/pantalla/${event.slug}`} target="_blank">
-                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-neutral-400 hover:text-sky-400" title="Ver Pantalla">
-                        <Tv className="w-4 h-4" />
-                      </Button>
-                    </Link>
-
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setDeletingId(event.id)}
-                      className="h-8 w-8 p-0 text-neutral-500 hover:text-red-400"
-                      title="Eliminar"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
                   </div>
-                </CardContent>
+
+                  <div className="grid grid-cols-3 gap-2 pt-1 border-t border-neutral-800/40">
+                    <Link href={`/eventos/${evt.id}/invitados`} className="w-full">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="w-full text-[11px] text-neutral-400 hover:text-sky-400 h-7 px-1"
+                      >
+                        <Users className="w-3 h-3 mr-1" />
+                        Invitados
+                      </Button>
+                    </Link>
+
+                    <Link href={`/album/${evt.slug}`} target="_blank" className="w-full">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="w-full text-[11px] text-neutral-400 hover:text-amber-400 h-7 px-1"
+                      >
+                        <Camera className="w-3 h-3 mr-1" />
+                        Álbum
+                      </Button>
+                    </Link>
+
+                    <button
+                      onClick={() => setDeletingId(evt.id)}
+                      className="inline-flex items-center justify-center text-[11px] text-neutral-500 hover:text-red-400 h-7 px-1 rounded-md transition-colors"
+                      title="Eliminar evento"
+                    >
+                      <Trash2 className="w-3 h-3 mr-1" />
+                      Borrar
+                    </button>
+                  </div>
+                </div>
               </Card>
             );
           })}
@@ -287,19 +340,19 @@ export function EventsManager({ initialEvents, templates }: EventsManagerProps) 
                 <label className="text-xs text-neutral-300 font-medium">Tipo de Evento</label>
                 <select
                   value={eventType}
-                  onChange={(e) => setEventType(e.target.value as any)}
+                  onChange={(e) => setEventType(e.target.value)}
                   className="w-full bg-neutral-950 border border-neutral-800 rounded-lg p-2.5 text-xs text-neutral-200 focus:outline-none"
                 >
-                  <option value="boda">Boda / Matrimonio</option>
-                  <option value="xv">Mis 15 Años</option>
-                  <option value="cumpleanos">Cumpleaños</option>
-                  <option value="corporativo">Corporativo</option>
-                  <option value="otro">Otro</option>
+                  {EVENT_TYPES.map((t) => (
+                    <option key={t.value} value={t.value}>
+                      {t.label}
+                    </option>
+                  ))}
                 </select>
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs text-neutral-300 font-medium">Plantilla de Diseño</label>
+                <label className="text-xs text-neutral-300 font-medium">Plantilla de Diseño (18)</label>
                 <select
                   value={selectedTemplateId}
                   onChange={(e) => setSelectedTemplateId(e.target.value)}
@@ -336,6 +389,16 @@ export function EventsManager({ initialEvents, templates }: EventsManagerProps) 
                 />
               </div>
             </div>
+
+            <div className="space-y-1.5">
+              <label className="text-xs text-neutral-300 font-medium">Dirección Completa (Opcional)</label>
+              <Input
+                placeholder="Ej: Paz 461, Victoria, San Fernando"
+                value={locationAddress}
+                onChange={(e) => setLocationAddress(e.target.value)}
+                className="bg-neutral-950 border-neutral-800 text-xs"
+              />
+            </div>
           </div>
           <DialogFooter>
             <Button
@@ -353,7 +416,7 @@ export function EventsManager({ initialEvents, templates }: EventsManagerProps) 
               className="bg-amber-500 hover:bg-amber-600 text-neutral-950 font-bold"
             >
               {isCreating && <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />}
-              Crear Evento
+              Crear Evento & Personalizar
             </Button>
           </DialogFooter>
         </DialogContent>
