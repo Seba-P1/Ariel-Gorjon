@@ -135,9 +135,9 @@ export default async function LandingPage() {
             <a href="#experiencia" className="hover:text-amber-400 transition-colors">
               Cómo Funciona
             </a>
-            <Link href="/plantillas" className="hover:text-amber-400 transition-colors font-bold text-amber-400">
+            <a href="#plantillas" className="hover:text-amber-400 transition-colors">
               18 Modelos de Tarjetas
-            </Link>
+            </a>
             <a href="#pantalla-en-vivo" className="hover:text-amber-400 transition-colors">
               Pantalla en Vivo
             </a>
