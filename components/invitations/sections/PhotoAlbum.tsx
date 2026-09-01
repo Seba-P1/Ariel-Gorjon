@@ -37,28 +37,28 @@ export function PhotoAlbum({ theme, data }: PhotoAlbumProps) {
   };
 
   return (
-    <section className="py-16 px-6 max-w-6xl mx-auto text-center" id="invitation-album">
+    <section className="py-10 sm:py-16 px-4 sm:px-6 max-w-6xl mx-auto text-center" id="invitation-album">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.8 }}
-        className="space-y-10"
+        className="space-y-6 sm:space-y-10"
       >
         <div className="space-y-2">
-          <div className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.25em] font-semibold text-[var(--theme-primary)]">
-            <Camera className="w-4 h-4" />
+          <div className="inline-flex items-center gap-2 text-[11px] sm:text-xs uppercase tracking-[0.25em] font-semibold text-[var(--theme-primary)]">
+            <Camera className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             <span>Galería de Recuerdos</span>
           </div>
           <h2
-            className="text-3xl sm:text-5xl font-bold tracking-tight"
+            className="text-2xl sm:text-4xl md:text-5xl font-bold tracking-tight"
             style={{ fontFamily: theme.fonts.heading, color: theme.palette.text }}
           >
             {data?.title || 'Momentos Inolvidables'}
           </h2>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-4">
           {photos.map((item, idx) => (
             <motion.div
               key={idx}
@@ -67,7 +67,7 @@ export function PhotoAlbum({ theme, data }: PhotoAlbumProps) {
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: idx * 0.1 }}
               onClick={() => setSelectedIdx(idx)}
-              className="group relative aspect-square rounded-2xl overflow-hidden cursor-pointer shadow-md border"
+              className="group relative aspect-square rounded-xl sm:rounded-2xl overflow-hidden cursor-pointer shadow-md border"
               style={{ borderColor: `${theme.palette.primary}30` }}
             >
               <Image

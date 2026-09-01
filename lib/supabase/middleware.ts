@@ -37,6 +37,7 @@ export async function updateSession(request: NextRequest) {
 
   // Only admin dashboard and administrative management routes are protected
   const protectedPaths = [
+    '/admin',
     '/dashboard',
     '/eventos',
     '/clientes',
@@ -44,14 +45,14 @@ export async function updateSession(request: NextRequest) {
   ];
 
   const isProtectedPath = protectedPaths.some((path) =>
-    request.nextUrl.pathname.startsWith(path)
+    request.nextUrl.pathname === path || request.nextUrl.pathname.startsWith(path + '/')
   );
 
   if (isProtectedPath) {
     if (!user) {
       const url = request.nextUrl.clone();
       url.pathname = '/login';
-      url.searchParams.set('next', request.nextUrl.pathname);
+      url.searchParams.set('next', request.nextUrl.pathname === '/admin' ? '/dashboard' : request.nextUrl.pathname);
       return NextResponse.redirect(url);
     }
 

@@ -117,10 +117,10 @@ export default async function EventDetailPage({ params }: EventDetailPageProps) 
               </div>
               <div>
                 <h3 className="font-semibold text-sm text-neutral-100 group-hover:text-amber-400 transition-colors">
-                  Confirmaciones RSVP ({totalPeople} pers.)
+                  Confirmaciones de Asistencia ({totalPeople} pers.)
                 </h3>
                 <p className="text-xs text-neutral-400 mt-0.5">
-                  {rsvpCount || 0} respuestas • Exportar Excel/CSV
+                  Respuestas de comensales y dietas
                 </p>
               </div>
             </CardContent>

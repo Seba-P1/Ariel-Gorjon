@@ -1,12 +1,8 @@
-'use client';
-
 import * as React from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
-  Sparkles,
   Camera,
   Tv,
   Users,
@@ -19,460 +15,503 @@ import {
   Calendar,
   Layers,
   Shield,
-  MessageCircle,
   ExternalLink,
+  Star,
+  Clock,
+  Download,
+  Share2,
+  ChevronRight,
 } from 'lucide-react';
+import { WhatsAppIcon } from '@/components/ui/icons/WhatsAppIcon';
+import { themeFontsVariables } from '@/lib/fonts';
+import { getSiteConfig } from '@/lib/site-config';
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  const config = await getSiteConfig();
+
   const families = [
     {
       name: 'Elegante Clásica',
-      desc: 'Tipografía serif sofisticada, fondos marfil y detalles en oro pulido.',
+      desc: 'Tipografía serif sofisticada, fondos marfil, detalles en oro pulido y estilo editorial.',
       color: '#C5A059',
       bg: '#0D1117',
+      tag: 'Bodas de Gala',
+      font: 'var(--font-cormorant), serif',
     },
     {
       name: 'Moderna Minimal',
-      desc: 'Líneas limpias, tipografía sans vanguardista y estética monocromática con acento dorado.',
+      desc: 'Líneas limpias, tipografía sans vanguardista, verde salvia y estética contemporánea.',
       color: '#E5E7EB',
       bg: '#000000',
+      tag: 'Minimal & Chic',
+      font: 'var(--font-montserrat), sans-serif',
     },
     {
       name: 'Floral Romántica',
-      desc: 'Tonos rosa empolvado, botánica suave y cursiva fluida para bodas de ensueño.',
+      desc: 'Rosa empolvado, botánica suave y cursiva fluida para celebraciones de ensueño.',
       color: '#F472B6',
       bg: '#1A0B14',
+      tag: 'Romántica',
+      font: 'var(--font-parisienne), cursive',
     },
     {
       name: 'Glamour Dorada',
-      desc: 'Alto impacto visual en negro carbón con brillos y dorados de fiesta nocturna.',
+      desc: 'Impacto visual nocturno en negro carbón con brillos, perlas y dorados de fiesta.',
       color: '#F59E0B',
       bg: '#0B0B0B',
+      tag: '15 Años & Galas',
+      font: 'var(--font-great-vibes), cursive',
     },
     {
       name: 'Neón Fiesta',
-      desc: 'Energía pura con degradados cian y magenta para cumpleaños de 15 y fiestas electrónicas.',
+      desc: 'Energía pura, degradados cyber cian y magenta para fiestas de 15 y eventos con DJ.',
       color: '#06B6D4',
       bg: '#0A0612',
+      tag: 'Party & DJ',
+      font: 'var(--font-orbitron), sans-serif',
     },
     {
       name: 'Rústica Boho',
       desc: 'Calidez terrosa en tonos terracota, lino y estética campestre al aire libre.',
       color: '#EA580C',
       bg: '#120B08',
+      tag: 'Quintas & Aire Libre',
+      font: 'var(--font-playfair), serif',
+    },
+  ];
+
+  const steps = [
+    {
+      number: '01',
+      title: 'Elegís y Personalizás tu Tarjeta',
+      desc: 'Seleccionás entre 18 plantillas exclusivas. Ajustamos paleta de color, fotos, música de fondo, itinerario y mapa exacto con GPS.',
+      icon: Layers,
+      color: 'text-amber-400',
+      bg: 'bg-amber-500/10 border-amber-500/20',
+    },
+    {
+      number: '02',
+      title: 'Enviás con Confirmación de Asistencia',
+      desc: 'Tus invitados reciben un enlace personalizado donde confirman su asistencia, cantidad de acompañantes y menú especial (veggie, celíaco).',
+      icon: Share2,
+      color: 'text-sky-400',
+      bg: 'bg-sky-500/10 border-sky-500/20',
+    },
+    {
+      number: '03',
+      title: 'Tus Invitados Suben Fotos por QR en las Mesas',
+      desc: 'Durante la fiesta, los invitados escanean los códigos QR con su celular. Sin descargar aplicaciones ni registrarse: suben fotos directamente.',
+      icon: Camera,
+      color: 'text-rose-400',
+      bg: 'bg-rose-500/10 border-rose-500/20',
+    },
+    {
+      number: '04',
+      title: 'Proyección en Vivo + Descarga en Alta Calidad',
+      desc: 'Las fotos aparecen en tiempo real en la pantalla gigante del salón con efectos visuales. Al día siguiente descargás todo en un archivo ZIP.',
+      icon: Tv,
+      color: 'text-emerald-400',
+      bg: 'bg-emerald-500/10 border-emerald-500/20',
     },
   ];
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-100 selection:bg-amber-500 selection:text-neutral-950">
-      {/* Navigation */}
-      <header className="sticky top-0 z-50 bg-neutral-950/80 backdrop-blur-xl border-b border-neutral-900">
-        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3">
-            <div className="p-2.5 rounded-2xl bg-amber-500/10 text-amber-400 border border-amber-500/20 shadow-lg shadow-amber-500/10">
-              <Sparkles className="w-5 h-5" />
-            </div>
+    <div className={`min-h-screen bg-neutral-950 text-neutral-100 selection:bg-amber-500 selection:text-neutral-950 antialiased ${themeFontsVariables}`}>
+      {/* Responsive Sticky Header */}
+      <header className="sticky top-0 z-50 bg-neutral-950/90 backdrop-blur-2xl border-b border-neutral-900">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between gap-2">
+          <Link href="/" className="flex items-center gap-2.5 sm:gap-3 group shrink-0">
             <div>
-              <span className="text-lg font-black tracking-tight bg-gradient-to-r from-amber-200 via-amber-400 to-amber-500 bg-clip-text text-transparent">
+              <span className="text-sm sm:text-lg font-black tracking-wider bg-gradient-to-r from-amber-200 via-amber-400 to-amber-500 bg-clip-text text-transparent block">
                 ARIEL PRODUCCIONES
               </span>
-              <span className="text-[10px] text-neutral-400 block tracking-widest uppercase font-medium">
+              <span className="text-[9px] sm:text-[10px] text-neutral-400 hidden xs:block tracking-widest uppercase font-medium">
                 Experiencias Digitales para Eventos
               </span>
             </div>
           </Link>
 
-          <nav className="hidden md:flex items-center gap-8 text-xs font-semibold text-neutral-300">
+          <nav className="hidden lg:flex items-center gap-8 text-xs font-semibold text-neutral-300">
             <a href="#experiencia" className="hover:text-amber-400 transition-colors">
-              La Experiencia
+              Cómo Funciona
             </a>
-            <Link href="/plantillas" className="hover:text-amber-400 transition-colors flex items-center gap-1 text-amber-400">
-              <Sparkles className="w-3 h-3" />
-              18 Plantillas
+            <Link href="/plantillas" className="hover:text-amber-400 transition-colors font-bold text-amber-400">
+              18 Modelos de Tarjetas
             </Link>
             <a href="#pantalla-en-vivo" className="hover:text-amber-400 transition-colors">
-              Álbum & Pantalla
+              Pantalla en Vivo
             </a>
             <a href="#planes" className="hover:text-amber-400 transition-colors">
-              Planes
+              Planes & Precios
             </a>
           </nav>
 
-          <div className="flex items-center gap-3">
-            <Link href="/login">
+          <div className="flex items-center gap-2 shrink-0">
+            <Link href="/plantillas">
               <Button
-                variant="outline"
                 size="sm"
-                className="border-neutral-800 hover:bg-neutral-900 text-neutral-200 text-xs font-semibold rounded-xl"
+                className="bg-amber-500 hover:bg-amber-600 text-neutral-950 font-bold text-xs rounded-xl shadow-lg shadow-amber-500/20 h-8 sm:h-9 px-3.5 sm:px-4"
               >
-                Panel de Control
+                Ver Tarjetas
               </Button>
             </Link>
-            <a
-              href="https://wa.me/5491100000000?text=Hola%20Ariel,%20quiero%20información%20para%20mi%20evento"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hidden sm:inline-flex"
-            >
-              <Button
-                size="sm"
-                className="bg-amber-500 hover:bg-amber-600 text-neutral-950 font-bold text-xs rounded-xl shadow-lg shadow-amber-500/20"
-              >
-                <MessageCircle className="w-4 h-4 mr-1.5" />
-                Contactar
-              </Button>
-            </a>
           </div>
         </div>
       </header>
 
       {/* Hero Section */}
-      <section className="relative pt-24 pb-32 px-6 overflow-hidden">
+      <section className="relative pt-16 sm:pt-24 pb-16 sm:pb-24 px-4 sm:px-6 overflow-hidden">
         {/* Glow ambient effects */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gradient-to-b from-amber-500/20 via-rose-500/10 to-transparent blur-3xl opacity-50 pointer-events-none" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] sm:w-[1000px] h-[350px] sm:h-[500px] bg-gradient-to-b from-amber-500/15 via-rose-500/5 to-transparent blur-3xl opacity-50 pointer-events-none" />
 
-        <div className="max-w-5xl mx-auto text-center space-y-8 relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-neutral-900/90 border border-amber-500/30 text-amber-400 text-xs font-bold uppercase tracking-wider shadow-lg"
-          >
-            <Sparkles className="w-4 h-4" />
-            <span>Invitaciones Digitales + Fotos en Pantalla Gigante</span>
-          </motion.div>
+        <div className="max-w-5xl mx-auto text-center space-y-6 sm:space-y-8 relative z-10">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full bg-neutral-900/90 border border-amber-500/30 text-amber-400 text-[11px] sm:text-xs font-bold uppercase tracking-widest shadow-xl">
+            <span>{config.hero.badge}</span>
+          </div>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.1 }}
-            className="text-4xl sm:text-6xl md:text-7xl font-black tracking-tight leading-[1.1]"
-          >
-            Hacé de tu fiesta una{' '}
-            <span className="bg-gradient-to-r from-amber-300 via-amber-400 to-amber-500 bg-clip-text text-transparent">
-              experiencia inolvidable
+          <h1 className="text-3xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight leading-[1.1]">
+            {config.hero.titleMain}{' '}
+            <span className="bg-gradient-to-r from-amber-200 via-amber-400 to-amber-500 bg-clip-text text-transparent">
+              {config.hero.titleHighlight}
             </span>
-          </motion.h1>
+          </h1>
 
-          <motion.p
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.2 }}
-            className="text-base sm:text-xl text-neutral-300 max-w-3xl mx-auto font-normal leading-relaxed"
-          >
-            Invitaciones web interactivas con música, mapas y confirmación RSVP al instante, junto con un
-            álbum PWA donde tus invitados suben fotos con código QR y se proyectan en vivo durante la
-            fiesta.
-          </motion.p>
+          <p className="text-sm sm:text-lg md:text-xl text-neutral-300 max-w-3xl mx-auto font-normal leading-relaxed px-2">
+            {config.hero.description}
+          </p>
 
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.3 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4"
-          >
-            <Link href="/plantillas">
-              <Button className="w-full sm:w-auto bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-600 hover:to-amber-500 text-neutral-950 font-black text-sm px-8 py-6 rounded-2xl shadow-xl shadow-amber-500/25 transition-all hover:scale-105">
-                <Sparkles className="w-4 h-4 mr-2" />
-                Explorar las 18 Plantillas en Vivo
+          {/* Action CTAs */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 pt-2 sm:pt-4">
+            <Link href="/plantillas" className="w-full sm:w-auto">
+              <Button className="w-full sm:w-auto bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-600 hover:to-amber-500 text-neutral-950 font-black text-xs sm:text-sm px-6 sm:px-8 py-5 sm:py-6 rounded-2xl shadow-xl shadow-amber-500/25 transition-all hover:scale-105 cursor-pointer">
+                Explorar 18 Modelos en Vivo
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </Link>
 
-            <a
-              href="#pantalla-en-vivo"
-              className="w-full sm:w-auto"
-            >
+            <a href="#experiencia" className="w-full sm:w-auto">
               <Button
                 variant="outline"
-                className="w-full sm:w-auto border-neutral-800 hover:bg-neutral-900 text-neutral-200 font-semibold text-sm px-8 py-6 rounded-2xl"
+                className="w-full sm:w-auto border-neutral-800 hover:bg-neutral-900 text-neutral-200 font-semibold text-xs sm:text-sm px-6 sm:px-8 py-5 sm:py-6 rounded-2xl"
               >
                 <Tv className="w-4 h-4 mr-2 text-sky-400" />
-                Ver Demo en Pantalla
+                ¿Cómo Funciona?
               </Button>
             </a>
-          </motion.div>
+          </div>
         </div>
       </section>
 
-      {/* 4 Pillars Section */}
-      <section id="experiencia" className="py-24 px-6 max-w-7xl mx-auto border-t border-neutral-900">
-        <div className="text-center space-y-3 mb-16">
+      {/* How it Works / Step by Step */}
+      <section id="experiencia" className="py-16 sm:py-24 px-4 sm:px-6 max-w-7xl mx-auto border-t border-neutral-900">
+        <div className="text-center space-y-3 sm:space-y-4 mb-12 sm:mb-16">
           <p className="text-xs uppercase tracking-[0.3em] font-bold text-amber-400">
-            Todo en una sola plataforma
+            Paso a Paso
           </p>
-          <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight">
-            La solución integral para tu evento
+          <h2 className="text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight">
+            ¿Cómo funciona el servicio para tu fiesta?
           </h2>
+          <p className="text-xs sm:text-sm text-neutral-400 max-w-2xl mx-auto">
+            Desde el primer mensaje hasta el final de la fiesta, todo pensado para que disfrutes sin preocupaciones.
+          </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {/* Card 1 */}
-          <div className="p-8 rounded-3xl bg-neutral-900/50 border border-neutral-800/80 hover:border-amber-500/40 transition-all space-y-4 flex flex-col justify-between">
-            <div className="space-y-4">
-              <div className="p-3.5 rounded-2xl bg-amber-500/10 text-amber-400 w-fit">
-                <Layers className="w-6 h-6" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          {steps.map((step) => {
+            const Icon = step.icon;
+            return (
+              <div
+                key={step.number}
+                className="p-6 sm:p-8 rounded-2xl sm:rounded-3xl bg-neutral-900/60 border border-neutral-800/90 hover:border-amber-500/40 transition-all duration-300 space-y-4 flex flex-col justify-between shadow-xl"
+              >
+                <div className="space-y-3.5">
+                  <div className="flex items-center justify-between">
+                    <div className={`p-3 rounded-2xl border ${step.bg} ${step.color}`}>
+                      <Icon className="w-5 h-5 sm:w-6 sm:h-6" />
+                    </div>
+                    <span className="text-xl sm:text-2xl font-black font-mono text-neutral-700">
+                      {step.number}
+                    </span>
+                  </div>
+                  <h3 className="text-base sm:text-lg font-bold text-neutral-100">{step.title}</h3>
+                  <p className="text-xs text-neutral-400 leading-relaxed">{step.desc}</p>
+                </div>
               </div>
-              <h3 className="text-xl font-bold text-neutral-100">Invitación Interactiva</h3>
-              <p className="text-xs text-neutral-400 leading-relaxed">
-                16 módulos intercambiables: cuenta regresiva, mapas Waze/Google, dress code, regalos con CBU,
-                música y mensajes emotivos.
-              </p>
-            </div>
-            <div className="pt-2 text-xs font-semibold text-amber-400">18 Estilos Exclusivos →</div>
-          </div>
-
-          {/* Card 2 */}
-          <div className="p-8 rounded-3xl bg-neutral-900/50 border border-neutral-800/80 hover:border-sky-500/40 transition-all space-y-4 flex flex-col justify-between">
-            <div className="space-y-4">
-              <div className="p-3.5 rounded-2xl bg-sky-500/10 text-sky-400 w-fit">
-                <CheckCircle2 className="w-6 h-6" />
-              </div>
-              <h3 className="text-xl font-bold text-neutral-100">RSVP con Cupos</h3>
-              <p className="text-xs text-neutral-400 leading-relaxed">
-                Confirmación por invitado o grupo familiar con límites de acompañantes, dietas celíaco/veggie y
-                exportación directa a Excel.
-              </p>
-            </div>
-            <div className="pt-2 text-xs font-semibold text-sky-400">Control en Tiempo Real →</div>
-          </div>
-
-          {/* Card 3 */}
-          <div className="p-8 rounded-3xl bg-neutral-900/50 border border-neutral-800/80 hover:border-rose-500/40 transition-all space-y-4 flex flex-col justify-between">
-            <div className="space-y-4">
-              <div className="p-3.5 rounded-2xl bg-rose-500/10 text-rose-400 w-fit">
-                <Camera className="w-6 h-6" />
-              </div>
-              <h3 className="text-xl font-bold text-neutral-100">Álbum PWA por QR</h3>
-              <p className="text-xs text-neutral-400 leading-relaxed">
-                Sin descargar aplicaciones. Los invitados escanean el código QR en las mesas y suben fotos en
-                alta calidad al instante.
-              </p>
-            </div>
-            <div className="pt-2 text-xs font-semibold text-rose-400">Descarga Completa ZIP →</div>
-          </div>
-
-          {/* Card 4 */}
-          <div className="p-8 rounded-3xl bg-neutral-900/50 border border-neutral-800/80 hover:border-violet-500/40 transition-all space-y-4 flex flex-col justify-between">
-            <div className="space-y-4">
-              <div className="p-3.5 rounded-2xl bg-violet-500/10 text-violet-400 w-fit">
-                <Tv className="w-6 h-6" />
-              </div>
-              <h3 className="text-xl font-bold text-neutral-100">Pantalla Gigante</h3>
-              <p className="text-xs text-neutral-400 leading-relaxed">
-                Proyección en vivo para proyectores y pantallas LED de salón con efectos visuales y alertas
-                emergentes en cada nueva foto.
-              </p>
-            </div>
-            <div className="pt-2 text-xs font-semibold text-violet-400">Modo Fullscreen F11 →</div>
-          </div>
+            );
+          })}
         </div>
       </section>
 
       {/* 18 Templates Showcase */}
-      <section id="plantillas" className="py-24 px-6 max-w-7xl mx-auto border-t border-neutral-900">
-        <div className="text-center space-y-3 mb-16">
+      <section id="plantillas" className="py-16 sm:py-24 px-4 sm:px-6 max-w-7xl mx-auto border-t border-neutral-900">
+        <div className="text-center space-y-3 sm:space-y-4 mb-12 sm:mb-16">
           <p className="text-xs uppercase tracking-[0.3em] font-bold text-amber-400">
-            Diseños de Vanguardia
+            Colección Exclusiva
           </p>
-          <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight">
-            18 Plantillas en 6 Familias de Estilo
+          <h2 className="text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight">
+            18 Modelos en 6 Familias de Diseño
           </h2>
-          <p className="text-sm text-neutral-400 max-w-2xl mx-auto">
-            Cada plantilla está curada con paletas de color HSL armoniosas, 20+ tipografías Google Fonts y
-            animaciones fluidas.
+          <p className="text-xs sm:text-sm text-neutral-400 max-w-2xl mx-auto">
+            Cada familia está diseñada por profesionales, con paletas cromáticas cuidadas y tipografías que transmiten la emoción exacta de tu noche.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {families.map((fam) => (
             <div
               key={fam.name}
-              className="p-8 rounded-3xl border border-neutral-800/80 transition-all hover:scale-105 flex flex-col justify-between"
+              className="p-6 sm:p-8 rounded-2xl sm:rounded-3xl border border-neutral-800/80 hover:border-amber-500/40 transition-all duration-300 hover:scale-102 flex flex-col justify-between shadow-xl"
               style={{ backgroundColor: fam.bg }}
             >
-              <div className="space-y-4">
-                <div
-                  className="w-8 h-8 rounded-full border border-white/20 shadow-md"
-                  style={{ backgroundColor: fam.color }}
-                />
-                <h3 className="text-2xl font-bold text-neutral-100">{fam.name}</h3>
+              <div className="space-y-3.5 sm:space-y-4">
+                <div className="flex items-center justify-between">
+                  <div
+                    className="w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-white/20 shadow-md"
+                    style={{ backgroundColor: fam.color }}
+                  />
+                  <Badge variant="outline" className="text-[10px] uppercase font-bold border-white/20 text-neutral-300">
+                    {fam.tag}
+                  </Badge>
+                </div>
+                <h3
+                  className="text-xl sm:text-2xl font-bold text-neutral-100"
+                  style={{ fontFamily: fam.font }}
+                >
+                  {fam.name}
+                </h3>
                 <p className="text-xs text-neutral-400 leading-relaxed">{fam.desc}</p>
               </div>
 
-              <div className="pt-6">
-                <Badge
-                  variant="outline"
-                  className="text-[10px] uppercase font-bold tracking-wider border-white/20 text-neutral-300"
-                >
-                  3 Versiones por Familia
-                </Badge>
+              <div className="pt-5 sm:pt-6 border-t border-white/10 flex items-center justify-between mt-4">
+                <span className="text-[11px] text-neutral-400">3 versiones</span>
+                <Link href="/plantillas" className="text-xs font-bold text-amber-400 hover:underline flex items-center gap-1">
+                  Ver modelos <ChevronRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-10 sm:mt-12 text-center">
+          <Link href="/plantillas">
+            <Button className="w-full sm:w-auto bg-amber-500 hover:bg-amber-600 text-neutral-950 font-black text-xs sm:text-sm px-6 sm:px-8 py-5 rounded-2xl shadow-xl shadow-amber-500/20">
+              Explorar Catálogo Completo de Modelos
+            </Button>
+          </Link>
+        </div>
+      </section>
+
+      {/* Realistic Live Screen Feature Section */}
+      <section id="pantalla-en-vivo" className="py-16 sm:py-24 px-4 sm:px-6 max-w-7xl mx-auto border-t border-neutral-900">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 items-center">
+          <div className="space-y-5 sm:space-y-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/10 border border-sky-500/30 text-sky-400 text-xs font-bold uppercase tracking-wider">
+              <Tv className="w-3.5 h-3.5" />
+              <span>Magia en Vivo durante la fiesta</span>
+            </div>
+
+            <h2 className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight leading-tight">
+              Tus invitados son los fotógrafos de la noche
+            </h2>
+
+            <p className="text-xs sm:text-base text-neutral-400 leading-relaxed">
+              Durante la recepción y el baile, los invitados escanean los códigos QR impresos en las mesas.
+              En menos de 3 segundos, sus fotos aparecen proyectadas en la pantalla del salón con su dedicatoria.
+            </p>
+
+            <ul className="space-y-3 text-xs sm:text-sm text-neutral-300">
+              <li className="flex items-center gap-2.5 sm:gap-3">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                <span><strong>Sin descargas:</strong> Funciona directo en el navegador de iPhone y Android sin instalar nada.</span>
+              </li>
+              <li className="flex items-center gap-2.5 sm:gap-3">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                <span><strong>Panel de moderación en tiempo real:</strong> Ocultás cualquier foto con un clic si lo deseás.</span>
+              </li>
+              <li className="flex items-center gap-2.5 sm:gap-3">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                <span><strong>Descarga ZIP en alta resolución:</strong> Al día siguiente tenés todas las fotos guardadas.</span>
+              </li>
+            </ul>
+          </div>
+
+          {/* Scenic Realistic Projection Stage */}
+          <div className="relative rounded-3xl overflow-hidden border border-neutral-800 shadow-2xl bg-neutral-900/90 p-4 sm:p-6 space-y-4">
+            {/* Ambient Background & LED Screen Stage */}
+            <div className="relative aspect-[16/10] sm:aspect-video rounded-2xl overflow-hidden border border-white/10 bg-black shadow-inner flex items-center justify-center">
+              {/* Photo */}
+              <img
+                src={config.liveScreenDemo.photoUrl}
+                alt="Proyección en Vivo"
+                className="w-full h-full object-cover"
+              />
+
+              {/* Dark Gradient Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-black/60 pointer-events-none" />
+
+              {/* Top Bar on Stage */}
+              <div className="absolute top-3 inset-x-3 flex items-center justify-between z-10">
+                <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/15">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="text-[10px] sm:text-xs font-bold text-neutral-200 uppercase tracking-wider">
+                    {config.liveScreenDemo.eventTitle}
+                  </span>
+                </div>
+
+                <span className="text-[10px] sm:text-xs font-mono font-bold text-amber-400 bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-full border border-amber-500/30">
+                  Foto {config.liveScreenDemo.photoNumber}
+                </span>
+              </div>
+
+              {/* Live Alert Box at Bottom */}
+              <div className="absolute bottom-3 inset-x-3 z-10 space-y-1.5 p-3 sm:p-4 rounded-xl bg-black/75 backdrop-blur-md border border-white/15">
+                <div className="flex items-center gap-2">
+                  <span className="px-2.5 py-0.5 rounded-full bg-amber-500 text-neutral-950 font-black text-[9px] sm:text-[10px] uppercase tracking-wider">
+                    📸 {config.liveScreenDemo.uploaderName}
+                  </span>
+                  <span className="text-[9px] sm:text-[10px] text-neutral-400 font-mono">Ahora mismo</span>
+                </div>
+                <p className="text-xs sm:text-sm text-neutral-100 font-medium line-clamp-2">
+                  "{config.liveScreenDemo.caption}"
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between text-[11px] text-neutral-400 px-1">
+              <span className="flex items-center gap-1.5 text-amber-400 font-semibold">
+                <QrCode className="w-3.5 h-3.5" />
+                Escaneá el QR de mesa para participar
+              </span>
+              <span className="font-mono text-[10px] text-neutral-500">1080p Full HD</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Reviews / Social Proof */}
+      <section className="py-16 sm:py-20 px-4 sm:px-6 max-w-7xl mx-auto border-t border-neutral-900">
+        <div className="text-center space-y-3 mb-10 sm:mb-12">
+          <p className="text-xs uppercase tracking-[0.3em] font-bold text-amber-400">
+            Testimonios Reales
+          </p>
+          <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight">
+            Lo que dicen quienes ya celebraron con nosotros
+          </h2>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+          {config.reviews.map((rev) => (
+            <div
+              key={rev.id}
+              className="p-6 sm:p-8 rounded-2xl sm:rounded-3xl bg-neutral-900/50 border border-neutral-800/80 space-y-4 flex flex-col justify-between shadow-xl"
+            >
+              <div className="space-y-3">
+                <div className="flex items-center gap-1 text-amber-400">
+                  {[...Array(rev.stars)].map((_, i) => (
+                    <Star key={i} className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-amber-400" />
+                  ))}
+                </div>
+                <p className="text-xs sm:text-sm text-neutral-300 italic leading-relaxed">
+                  "{rev.quote}"
+                </p>
+              </div>
+
+              <div className="pt-3 sm:pt-4 border-t border-neutral-800/80">
+                <p className="text-xs font-bold text-neutral-200">{rev.author}</p>
+                <p className="text-[10px] text-neutral-500">{rev.event}</p>
               </div>
             </div>
           ))}
         </div>
       </section>
 
-      {/* Live Screen & Album Showcase */}
-      <section id="pantalla-en-vivo" className="py-24 px-6 max-w-7xl mx-auto border-t border-neutral-900">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <div className="space-y-6">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/10 border border-sky-500/30 text-sky-400 text-xs font-bold uppercase tracking-wider">
-              <Tv className="w-3.5 h-3.5" />
-              <span>Magia en Vivo durante la fiesta</span>
-            </div>
-
-            <h2 className="text-3xl sm:text-5xl font-black tracking-tight leading-tight">
-              Tus invitados son los fotógrafos de la noche
-            </h2>
-
-            <p className="text-sm sm:text-base text-neutral-400 leading-relaxed">
-              Durante la recepción y el baile, los invitados escanean los códigos QR impresos en las mesas.
-              En menos de 5 segundos, sus fotos aparecen proyectadas en la pantalla del salón con su nombre y
-              dedicatoria.
-            </p>
-
-            <ul className="space-y-3 text-xs sm:text-sm text-neutral-300">
-              <li className="flex items-center gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span>Sin descargas: funciona en cualquier navegador de iPhone y Android.</span>
-              </li>
-              <li className="flex items-center gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span>Panel de moderación en tiempo real para ocultar cualquier foto inadecuada.</span>
-              </li>
-              <li className="flex items-center gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span>Descarga del álbum completo en alta calidad en archivo ZIP al día siguiente.</span>
-              </li>
-            </ul>
-          </div>
-
-          {/* Visual Showcase Box */}
-          <div className="relative p-6 sm:p-10 rounded-3xl bg-neutral-900 border border-neutral-800 shadow-2xl space-y-6 overflow-hidden">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 blur-3xl pointer-events-none" />
-
-            <div className="flex items-center justify-between border-b border-neutral-800 pb-4">
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-red-500/80" />
-                <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
-                <div className="w-3 h-3 rounded-full bg-green-500/80" />
-              </div>
-              <span className="text-[11px] font-mono text-neutral-500">pantalla.arielproducciones.com</span>
-            </div>
-
-            <div className="relative aspect-video rounded-2xl overflow-hidden bg-neutral-950 border border-neutral-800 flex items-center justify-center p-6 text-center">
-              <div className="space-y-3">
-                <div className="inline-flex p-3 rounded-full bg-amber-500/20 text-amber-400">
-                  <Sparkles className="w-6 h-6 animate-pulse" />
-                </div>
-                <h4 className="font-bold text-base text-neutral-200">¡Nueva Foto de Familia Pérez!</h4>
-                <p className="text-xs text-neutral-400">"¡Felicidades a los recién casados! Los amamos ❤️"</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Pricing / Packages */}
-      <section id="planes" className="py-24 px-6 max-w-7xl mx-auto border-t border-neutral-900">
-        <div className="text-center space-y-3 mb-16">
+      <section id="planes" className="py-16 sm:py-24 px-4 sm:px-6 max-w-7xl mx-auto border-t border-neutral-900">
+        <div className="text-center space-y-3 sm:space-y-4 mb-12 sm:mb-16">
           <p className="text-xs uppercase tracking-[0.3em] font-bold text-amber-400">
             Precios Claros & Sin Sorpresas
           </p>
-          <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight">
+          <h2 className="text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight">
             Elegí el plan perfecto para tu evento
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Plan 1 */}
-          <div className="p-8 rounded-3xl bg-neutral-900/40 border border-neutral-800 space-y-6 flex flex-col justify-between">
-            <div className="space-y-4">
-              <h3 className="text-xl font-bold">Invitación Esencial</h3>
-              <p className="text-xs text-neutral-400">Para quienes buscan una invitación moderna y elegante.</p>
-              <div className="text-3xl font-black text-neutral-100">$25.000</div>
-              <ul className="space-y-2.5 text-xs text-neutral-300 pt-4 border-t border-neutral-800">
-                <li className="flex items-center gap-2">✓ Invitación web personalizada</li>
-                <li className="flex items-center gap-2">✓ Confirmación RSVP básica</li>
-                <li className="flex items-center gap-2">✓ Ubicación GPS y cuenta regresiva</li>
-                <li className="flex items-center gap-2">✓ Datos bancarios / regalos</li>
-              </ul>
-            </div>
-            <a
-              href="https://wa.me/5491100000000?text=Hola%20Ariel,%20quiero%20el%20Plan%20Esencial"
-              target="_blank"
-              rel="noopener noreferrer"
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+          {config.plans.map((plan) => (
+            <div
+              key={plan.id}
+              className={`p-6 sm:p-8 rounded-2xl sm:rounded-3xl border space-y-5 sm:space-y-6 flex flex-col justify-between shadow-xl relative ${
+                plan.isFeatured
+                  ? 'bg-neutral-900 border-2 border-amber-500 shadow-amber-500/15 md:scale-103'
+                  : 'bg-neutral-900/50 border-neutral-800'
+              }`}
             >
-              <Button variant="outline" className="w-full border-neutral-800 text-xs font-semibold">
-                Contratar Esencial
-              </Button>
-            </a>
-          </div>
+              {plan.isFeatured && (
+                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-amber-500 text-neutral-950 font-black text-[10px] uppercase tracking-widest shadow-md">
+                  MÁS ELEGIDO
+                </div>
+              )}
 
-          {/* Plan 2: Destacado */}
-          <div className="p-8 rounded-3xl bg-neutral-900 border-2 border-amber-500 shadow-2xl shadow-amber-500/10 space-y-6 flex flex-col justify-between relative">
-            <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-amber-500 text-neutral-950 font-bold text-[10px] uppercase tracking-wider">
-              Más Elegido
-            </div>
-            <div className="space-y-4">
-              <h3 className="text-xl font-bold text-amber-400">Experiencia Completa</h3>
-              <p className="text-xs text-neutral-300">Invitación interactiva + Álbum en vivo + Pantalla de fiesta.</p>
-              <div className="text-3xl font-black text-amber-400">$45.000</div>
-              <ul className="space-y-2.5 text-xs text-neutral-200 pt-4 border-t border-neutral-800">
-                <li className="flex items-center gap-2">✓ Todo lo del plan Esencial</li>
-                <li className="flex items-center gap-2">✓ Álbum PWA con subida QR</li>
-                <li className="flex items-center gap-2">✓ Proyección en pantalla gigante en vivo</li>
-                <li className="flex items-center gap-2">✓ Links personales por invitado (slots)</li>
-                <li className="flex items-center gap-2">✓ Descarga ZIP en alta resolución</li>
-              </ul>
-            </div>
-            <a
-              href="https://wa.me/5491100000000?text=Hola%20Ariel,%20quiero%20el%20Plan%20Experiencia%20Completa"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Button className="w-full bg-amber-500 hover:bg-amber-600 text-neutral-950 font-bold text-xs">
-                Contratar Experiencia Completa
-              </Button>
-            </a>
-          </div>
+              <div className="space-y-3.5 sm:space-y-4">
+                <h3 className={`text-lg sm:text-xl font-bold ${plan.isFeatured ? 'text-amber-400' : 'text-neutral-100'}`}>
+                  {plan.name}
+                </h3>
+                <p className="text-xs text-neutral-400">{plan.description}</p>
+                <div className={`text-2xl sm:text-3xl font-black ${plan.isFeatured ? 'text-amber-400' : 'text-neutral-100'}`}>
+                  {plan.price}
+                </div>
+                <ul className="space-y-2.5 text-xs text-neutral-300 pt-4 border-t border-neutral-800">
+                  {plan.features.map((feat, i) => (
+                    <li key={i} className="flex items-center gap-2">
+                      <span className="text-emerald-400 font-bold">✓</span>
+                      <span>{feat}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
 
-          {/* Plan 3 */}
-          <div className="p-8 rounded-3xl bg-neutral-900/40 border border-neutral-800 space-y-6 flex flex-col justify-between">
-            <div className="space-y-4">
-              <h3 className="text-xl font-bold">Producción Total</h3>
-              <p className="text-xs text-neutral-400">Para bodas y mega eventos con asistencia técnica presencial.</p>
-              <div className="text-3xl font-black text-neutral-100">Consultar</div>
-              <ul className="space-y-2.5 text-xs text-neutral-300 pt-4 border-t border-neutral-800">
-                <li className="flex items-center gap-2">✓ Todo lo del plan Experiencia Completa</li>
-                <li className="flex items-center gap-2">✓ Operador técnico presencial en el evento</li>
-                <li className="flex items-center gap-2">✓ Carteles acrílicos con QR para mesas</li>
-                <li className="flex items-center gap-2">✓ Dominio web exclusivo (ej: sofiaymateo.com)</li>
-              </ul>
+              <a
+                href={`https://wa.me/${config.contact.whatsappNumber}?text=${encodeURIComponent(plan.whatsappMessage)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Button
+                  className={`w-full text-xs font-bold h-11 rounded-xl shadow-md flex items-center justify-center gap-2 ${
+                    plan.isFeatured
+                      ? 'bg-[#25D366] hover:bg-[#20bd5a] text-neutral-950 font-black shadow-[#25D366]/25'
+                      : 'border border-neutral-800 bg-neutral-950 hover:bg-neutral-800 text-neutral-200'
+                  }`}
+                >
+                  <WhatsAppIcon className="w-4 h-4" />
+                  <span>{plan.buttonText}</span>
+                </Button>
+              </a>
             </div>
-            <a
-              href="https://wa.me/5491100000000?text=Hola%20Ariel,%20quiero%20el%20Plan%20Producción%20Total"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Button variant="outline" className="w-full border-neutral-800 text-xs font-semibold">
-                Consultar Presupuesto
-              </Button>
-            </a>
-          </div>
+          ))}
         </div>
       </section>
 
+      {/* Floating Official WhatsApp CTA */}
+      <aside aria-label="Contacto directo por WhatsApp" className="fixed bottom-5 right-5 sm:bottom-6 sm:right-6 z-50">
+        <a
+          href={`https://wa.me/${config.contact.whatsappNumber}?text=${encodeURIComponent(config.contact.whatsappText)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-2.5 bg-[#25D366] hover:bg-[#20bd5a] text-neutral-950 font-black text-xs px-4 py-3.5 rounded-full shadow-2xl shadow-[#25D366]/40 transition-all hover:scale-105"
+        >
+          <WhatsAppIcon className="w-5 h-5 text-neutral-950" />
+          <span className="hidden sm:inline font-bold">Hablar con Ariel por WhatsApp</span>
+        </a>
+      </aside>
+
       {/* Footer */}
-      <footer className="py-12 px-6 border-t border-neutral-900 text-center text-xs text-neutral-500 space-y-4">
-        <div className="flex items-center justify-center gap-2 text-amber-400 font-bold text-sm">
-          <Sparkles className="w-4 h-4" />
-          <span>Ariel Producciones</span>
+      <footer className="py-12 sm:py-16 px-4 sm:px-6 border-t border-neutral-900 text-center text-xs text-neutral-500 space-y-3">
+        <div className="text-amber-400 font-bold text-sm tracking-wide">
+          Ariel Producciones
         </div>
         <p>© {new Date().getFullYear()} Ariel Producciones. Todos los derechos reservados.</p>
         <p className="text-[11px] text-neutral-600">
-          Diseñado y desarrollado para eventos inolvidables en Argentina y Latinoamérica.
+          Experiencias digitales para bodas, 15 años y celebraciones únicas.
         </p>
       </footer>
     </div>

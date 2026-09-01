@@ -4,7 +4,7 @@ import * as React from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { QRCodeSVG } from 'qrcode.react';
-import { Camera, Sparkles, ArrowRight, Smartphone } from 'lucide-react';
+import { Camera, ArrowRight, Smartphone } from 'lucide-react';
 import { InvitationTheme, Event } from '@/types/domain';
 import { Button } from '@/components/ui/button';
 import { APP_CONFIG } from '@/lib/constants';
@@ -24,13 +24,13 @@ export function LiveAlbumQr({ theme, event, data }: LiveAlbumQrProps) {
     : `${APP_CONFIG.url}/album/${event.slug}`;
 
   return (
-    <section className="py-16 px-6 max-w-3xl mx-auto text-center" id="invitation-live-album">
+    <section className="py-10 sm:py-16 px-4 sm:px-6 max-w-3xl mx-auto text-center" id="invitation-live-album">
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         whileInView={{ opacity: 1, scale: 1 }}
         viewport={{ once: true }}
         transition={{ duration: 0.8 }}
-        className="p-8 sm:p-12 rounded-3xl border shadow-xl space-y-8 relative overflow-hidden"
+        className="p-5 sm:p-10 rounded-2xl sm:rounded-3xl border shadow-xl space-y-6 sm:space-y-8 relative overflow-hidden"
         style={{
           backgroundColor: theme.palette.secondary,
           borderColor: `${theme.palette.primary}50`,
@@ -43,17 +43,17 @@ export function LiveAlbumQr({ theme, event, data }: LiveAlbumQrProps) {
         />
 
         <div className="space-y-2 relative z-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest bg-[var(--theme-primary)]/15 text-[var(--theme-primary)] mb-2">
-            <Sparkles className="w-3.5 h-3.5" />
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-widest bg-[var(--theme-primary)]/15 text-[var(--theme-primary)] mb-1 sm:mb-2">
+            <Camera className="w-3.5 h-3.5" />
             <span>Novedad en la Fiesta</span>
           </div>
           <h2
-            className="text-3xl sm:text-4xl font-bold tracking-tight"
+            className="text-2xl sm:text-4xl font-bold tracking-tight"
             style={{ fontFamily: theme.fonts.heading, color: theme.palette.text }}
           >
             {data?.title || '📸 Álbum de Fotos en Vivo'}
           </h2>
-          <p className="text-sm opacity-85 max-w-md mx-auto" style={{ color: theme.palette.text }}>
+          <p className="text-xs sm:text-sm opacity-85 max-w-md mx-auto" style={{ color: theme.palette.text }}>
             {data?.description ||
               'Durante la fiesta, vas a poder escanear este código con tu celular para subir fotos y verlas proyectadas en pantalla gigante en tiempo real.'}
           </p>

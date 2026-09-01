@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
-import { Sparkles, Mail, Lock, ArrowRight, Loader2, KeyRound } from 'lucide-react';
+import { Mail, Lock, ArrowRight, Loader2, KeyRound } from 'lucide-react';
 
 import { createClient } from '@/lib/supabase/client';
 import { loginSchema, magicLinkSchema, type LoginFormData, type MagicLinkFormData } from '@/lib/validations/auth';
@@ -98,7 +98,7 @@ function LoginFormContent() {
     <div className="w-full max-w-md space-y-6">
       <div className="text-center space-y-2">
         <div className="inline-flex items-center justify-center p-3 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-400 mb-2">
-          <Sparkles className="w-8 h-8" />
+          <KeyRound className="w-7 h-7" />
         </div>
         <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-amber-200 via-amber-400 to-amber-200 bg-clip-text text-transparent">
           Ariel Producciones

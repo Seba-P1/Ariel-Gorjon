@@ -44,7 +44,6 @@ import {
   CheckCircle2,
   XCircle,
   Clock,
-  Sparkles,
   Loader2,
 } from 'lucide-react';
 

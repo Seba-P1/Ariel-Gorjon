@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { motion } from 'framer-motion';
-import { Heart, Sparkles } from 'lucide-react';
+import { Heart } from 'lucide-react';
 import { InvitationTheme } from '@/types/domain';
 
 interface StoryProps {
@@ -39,28 +39,28 @@ export function Story({ theme, data }: StoryProps) {
   ];
 
   return (
-    <section className="py-16 px-6 max-w-4xl mx-auto" id="invitation-story">
+    <section className="py-10 sm:py-16 px-4 sm:px-6 max-w-4xl mx-auto" id="invitation-story">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.8 }}
-        className="text-center space-y-12"
+        className="text-center space-y-8 sm:space-y-12"
       >
         <div className="space-y-2">
-          <div className="inline-flex items-center gap-1.5 text-xs uppercase tracking-[0.25em] font-semibold text-[var(--theme-primary)]">
+          <div className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs uppercase tracking-[0.25em] font-semibold text-[var(--theme-primary)]">
             <Heart className="w-3.5 h-3.5 fill-current" />
             <span>{data?.subtitle || 'Nuestra Historia'}</span>
           </div>
           <h2
-            className="text-3xl sm:text-5xl font-bold tracking-tight"
+            className="text-2xl sm:text-4xl md:text-5xl font-bold tracking-tight"
             style={{ fontFamily: theme.fonts.heading, color: theme.palette.text }}
           >
             {data?.title || 'El Camino Hacia el Gran Día'}
           </h2>
         </div>
 
-        <div className="relative border-l-2 mx-auto max-w-xl text-left pl-6 space-y-10" style={{ borderColor: `${theme.palette.primary}40` }}>
+        <div className="relative border-l-2 mx-auto max-w-xl text-left pl-5 sm:pl-6 space-y-8 sm:space-y-10 ml-4 sm:mx-auto" style={{ borderColor: `${theme.palette.primary}40` }}>
           {milestones.map((item, idx) => (
             <motion.div
               key={item.title}
@@ -78,7 +78,7 @@ export function Story({ theme, data }: StoryProps) {
                   borderColor: theme.palette.primary,
                 }}
               >
-                <Sparkles className="w-3.5 h-3.5 text-[var(--theme-primary)]" />
+                <Heart className="w-3.5 h-3.5 text-[var(--theme-primary)] fill-current" />
               </div>
 
               <span

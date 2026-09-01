@@ -30,34 +30,34 @@ export function EventDetails({ theme, event, data }: EventDetailsProps) {
     : '20:30 hs';
 
   return (
-    <section className="py-16 px-6 max-w-5xl mx-auto" id="invitation-details">
+    <section className="py-10 sm:py-16 px-4 sm:px-6 max-w-5xl mx-auto" id="invitation-details">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.8 }}
-        className="text-center space-y-12"
+        className="text-center space-y-8 sm:space-y-12"
       >
         <div className="space-y-2">
-          <p className="text-xs uppercase tracking-[0.25em] font-semibold text-[var(--theme-primary)]">
+          <p className="text-[11px] sm:text-xs uppercase tracking-[0.25em] font-semibold text-[var(--theme-primary)]">
             Información del Evento
           </p>
           <h2
-            className="text-3xl sm:text-5xl font-bold tracking-tight"
+            className="text-2xl sm:text-4xl md:text-5xl font-bold tracking-tight"
             style={{ fontFamily: theme.fonts.heading, color: theme.palette.text }}
           >
             Dónde y Cuándo
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-8 text-left">
           {/* Ceremony / Civil Card */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="p-8 rounded-3xl border shadow-sm space-y-6 flex flex-col justify-between"
+            className="p-5 sm:p-8 rounded-2xl sm:rounded-3xl border shadow-sm space-y-4 sm:space-y-6 flex flex-col justify-between"
             style={{
               backgroundColor: theme.palette.secondary,
               borderColor: `${theme.palette.primary}30`,
@@ -106,7 +106,7 @@ export function EventDetails({ theme, event, data }: EventDetailsProps) {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="p-8 rounded-3xl border shadow-sm space-y-6 flex flex-col justify-between"
+            className="p-5 sm:p-8 rounded-2xl sm:rounded-3xl border shadow-sm space-y-4 sm:space-y-6 flex flex-col justify-between"
             style={{
               backgroundColor: theme.palette.secondary,
               borderColor: `${theme.palette.primary}30`,

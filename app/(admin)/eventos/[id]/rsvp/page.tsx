@@ -33,7 +33,7 @@ export default async function EventRsvpPage({ params }: EventRsvpPageProps) {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight text-neutral-100">
-          Confirmaciones de Asistencia (RSVP)
+          Confirmaciones de Asistencia
         </h1>
         <p className="text-xs text-neutral-400 mt-1">
           Evento: <strong className="text-amber-400">{event.title}</strong> (`{event.slug}`)

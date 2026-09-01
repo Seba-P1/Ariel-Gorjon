@@ -429,7 +429,7 @@ export function EventsManager({ initialEvents, templates }: EventsManagerProps) 
             <DialogTitle>¿Eliminar este evento?</DialogTitle>
           </DialogHeader>
           <p className="text-sm text-neutral-400">
-            Se eliminarán las invitaciones, fotos asociadas y confirmaciones RSVP de forma irreversible.
+            Se eliminarán las invitaciones, fotos asociadas y confirmaciones de asistencia de forma irreversible.
           </p>
           <DialogFooter>
             <Button

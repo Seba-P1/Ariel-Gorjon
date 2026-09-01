@@ -24,32 +24,32 @@ export function LocationMap({ theme, event, data }: LocationMapProps) {
   const wazeUrl = `https://waze.com/ul?q=${query}`;
 
   return (
-    <section className="py-16 px-6 max-w-5xl mx-auto text-center" id="invitation-location">
+    <section className="py-10 sm:py-16 px-4 sm:px-6 max-w-5xl mx-auto text-center" id="invitation-location">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.8 }}
-        className="space-y-8"
+        className="space-y-6 sm:space-y-8"
       >
         <div className="space-y-2">
-          <p className="text-xs uppercase tracking-[0.25em] font-semibold text-[var(--theme-primary)]">
+          <p className="text-[11px] sm:text-xs uppercase tracking-[0.25em] font-semibold text-[var(--theme-primary)]">
             Ubicación
           </p>
           <h2
-            className="text-3xl sm:text-5xl font-bold tracking-tight"
+            className="text-2xl sm:text-4xl md:text-5xl font-bold tracking-tight"
             style={{ fontFamily: theme.fonts.heading, color: theme.palette.text }}
           >
             {event.location_name || 'Cómo Llegar'}
           </h2>
-          <p className="text-sm max-w-md mx-auto opacity-80" style={{ color: theme.palette.text }}>
+          <p className="text-xs sm:text-sm max-w-md mx-auto opacity-80" style={{ color: theme.palette.text }}>
             {address}
           </p>
         </div>
 
         {/* Map Container */}
         <div
-          className="w-full h-80 sm:h-96 rounded-3xl overflow-hidden shadow-lg border relative"
+          className="w-full h-64 sm:h-96 rounded-2xl sm:rounded-3xl overflow-hidden shadow-lg border relative"
           style={{ borderColor: `${theme.palette.primary}40` }}
         >
           <iframe
@@ -64,16 +64,16 @@ export function LocationMap({ theme, event, data }: LocationMapProps) {
         </div>
 
         {data?.instructions && (
-          <p className="text-xs sm:text-sm italic opacity-75 max-w-lg mx-auto" style={{ color: theme.palette.text }}>
+          <p className="text-xs sm:text-sm italic opacity-75 max-w-lg mx-auto px-2" style={{ color: theme.palette.text }}>
             💡 {data.instructions}
           </p>
         )}
 
         {/* Action Buttons */}
-        <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
-          <a href={googleMapsUrl} target="_blank" rel="noopener noreferrer">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 pt-2">
+          <a href={googleMapsUrl} target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto">
             <Button
-              className="font-medium shadow-md transition-all hover:scale-105"
+              className="w-full sm:w-auto font-bold text-xs h-11 px-6 rounded-xl shadow-md transition-all hover:scale-105"
               style={{
                 backgroundColor: theme.palette.primary,
                 color: theme.palette.bg === '#FFFFFF' || theme.palette.bg === '#FFFDF8' ? '#FFFFFF' : '#000000',
@@ -84,10 +84,10 @@ export function LocationMap({ theme, event, data }: LocationMapProps) {
             </Button>
           </a>
 
-          <a href={wazeUrl} target="_blank" rel="noopener noreferrer">
+          <a href={wazeUrl} target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto">
             <Button
               variant="outline"
-              className="font-medium border transition-all hover:scale-105"
+              className="w-full sm:w-auto font-bold text-xs h-11 px-6 rounded-xl border transition-all hover:scale-105"
               style={{
                 borderColor: theme.palette.primary,
                 color: theme.palette.text,

@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { motion } from 'framer-motion';
-import { Shirt, Sparkles } from 'lucide-react';
+import { Shirt } from 'lucide-react';
 import { InvitationTheme, Event } from '@/types/domain';
 
 interface DressCodeProps {
@@ -29,33 +29,33 @@ export function DressCode({ theme, data }: DressCodeProps) {
   ];
 
   return (
-    <section className="py-16 px-6 max-w-3xl mx-auto text-center" id="invitation-dresscode">
+    <section className="py-10 sm:py-16 px-4 sm:px-6 max-w-3xl mx-auto text-center" id="invitation-dresscode">
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         whileInView={{ opacity: 1, scale: 1 }}
         viewport={{ once: true }}
         transition={{ duration: 0.8 }}
-        className="p-8 sm:p-12 rounded-3xl border shadow-sm space-y-6"
+        className="p-5 sm:p-10 rounded-2xl sm:rounded-3xl border shadow-sm space-y-5 sm:space-y-6"
         style={{
           backgroundColor: theme.palette.secondary,
           borderColor: `${theme.palette.primary}40`,
         }}
       >
-        <div className="inline-flex p-4 rounded-full bg-[var(--theme-primary)]/10 text-[var(--theme-primary)] mb-2">
-          <Shirt className="w-8 h-8" />
+        <div className="inline-flex p-3 sm:p-4 rounded-full bg-[var(--theme-primary)]/10 text-[var(--theme-primary)] mb-1 sm:mb-2">
+          <Shirt className="w-6 h-6 sm:w-8 sm:h-8" />
         </div>
 
         <div className="space-y-2">
-          <p className="text-xs uppercase tracking-[0.25em] font-semibold text-[var(--theme-primary)]">
+          <p className="text-[11px] sm:text-xs uppercase tracking-[0.25em] font-semibold text-[var(--theme-primary)]">
             Código de Vestimenta
           </p>
           <h2
-            className="text-3xl sm:text-4xl font-bold tracking-tight"
+            className="text-2xl sm:text-4xl font-bold tracking-tight"
             style={{ fontFamily: theme.fonts.heading, color: theme.palette.text }}
           >
             {codeType}
           </h2>
-          <p className="text-sm max-w-md mx-auto opacity-80" style={{ color: theme.palette.text }}>
+          <p className="text-xs sm:text-sm max-w-md mx-auto opacity-80" style={{ color: theme.palette.text }}>
             {description}
           </p>
         </div>
@@ -84,7 +84,7 @@ export function DressCode({ theme, data }: DressCodeProps) {
 
         {data?.notes && (
           <div className="pt-4 border-t border-[var(--theme-primary)]/20 text-xs italic opacity-75 flex items-center justify-center gap-1.5" style={{ color: theme.palette.text }}>
-            <Sparkles className="w-3.5 h-3.5 text-[var(--theme-primary)]" />
+            <Shirt className="w-3.5 h-3.5 text-[var(--theme-primary)]" />
             <span>{data.notes}</span>
           </div>
         )}

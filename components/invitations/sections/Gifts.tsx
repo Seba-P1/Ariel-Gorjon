@@ -36,33 +36,33 @@ export function Gifts({ theme, data }: GiftsProps) {
   };
 
   return (
-    <section className="py-16 px-6 max-w-3xl mx-auto text-center" id="invitation-gifts">
+    <section className="py-10 sm:py-16 px-4 sm:px-6 max-w-3xl mx-auto text-center" id="invitation-gifts">
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         whileInView={{ opacity: 1, scale: 1 }}
         viewport={{ once: true }}
         transition={{ duration: 0.8 }}
-        className="p-8 sm:p-12 rounded-3xl border shadow-sm space-y-6"
+        className="p-5 sm:p-10 rounded-2xl sm:rounded-3xl border shadow-sm space-y-5 sm:space-y-6"
         style={{
           backgroundColor: theme.palette.secondary,
           borderColor: `${theme.palette.primary}40`,
         }}
       >
-        <div className="inline-flex p-4 rounded-full bg-[var(--theme-primary)]/10 text-[var(--theme-primary)] mb-2">
-          <Gift className="w-8 h-8" />
+        <div className="inline-flex p-3 sm:p-4 rounded-full bg-[var(--theme-primary)]/10 text-[var(--theme-primary)] mb-1 sm:mb-2">
+          <Gift className="w-6 h-6 sm:w-8 sm:h-8" />
         </div>
 
         <div className="space-y-2">
-          <p className="text-xs uppercase tracking-[0.25em] font-semibold text-[var(--theme-primary)]">
+          <p className="text-[11px] sm:text-xs uppercase tracking-[0.25em] font-semibold text-[var(--theme-primary)]">
             Mesa de Regalos
           </p>
           <h2
-            className="text-3xl sm:text-4xl font-bold tracking-tight"
+            className="text-2xl sm:text-4xl font-bold tracking-tight"
             style={{ fontFamily: theme.fonts.heading, color: theme.palette.text }}
           >
             {data?.title || 'Tu Presencia es Nuestro Mejor Regalo'}
           </h2>
-          <p className="text-sm opacity-80 max-w-md mx-auto" style={{ color: theme.palette.text }}>
+          <p className="text-xs sm:text-sm opacity-80 max-w-md mx-auto" style={{ color: theme.palette.text }}>
             {data?.description ||
               'Si deseás hacernos un presente, podés colaborar con nuestra luna de miel o proyecto a través de los siguientes datos bancarios:'}
           </p>
@@ -70,7 +70,7 @@ export function Gifts({ theme, data }: GiftsProps) {
 
         {/* Bank Details Box */}
         <div
-          className="p-6 rounded-2xl bg-white/60 dark:bg-black/40 border space-y-4 max-w-lg mx-auto text-left"
+          className="p-4 sm:p-6 rounded-xl sm:rounded-2xl bg-white/60 dark:bg-black/40 border space-y-4 max-w-lg mx-auto text-left"
           style={{ borderColor: `${theme.palette.primary}30` }}
         >
           <div className="flex items-center justify-between">

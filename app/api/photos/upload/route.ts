@@ -18,10 +18,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Verify MIME type
+    // Verify MIME type and size
     if (!file.type.startsWith('image/')) {
       return NextResponse.json(
         { error: 'El archivo debe ser una imagen válida (JPG, PNG, WebP, HEIC).' },
+        { status: 400 }
+      );
+    }
+
+    if (file.size > 20 * 1024 * 1024) {
+      return NextResponse.json(
+        { error: 'La foto no debe superar los 20MB.' },
         { status: 400 }
       );
     }

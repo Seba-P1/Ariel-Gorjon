@@ -17,7 +17,6 @@ import {
   Play,
   Pause,
   Settings,
-  Sparkles,
   Camera,
   X,
   Smartphone,
@@ -179,12 +178,12 @@ export function LiveSlideshow({ event, initialPhotos }: LiveSlideshowProps) {
         <>
           {/* Ambient Blurred Background */}
           {currentPhoto && (
-            <div className="absolute inset-0 overflow-hidden opacity-40 blur-3xl scale-125 transition-all duration-1000">
-              <Image
+            <div className="absolute inset-0 overflow-hidden opacity-40 blur-3xl scale-125 transition-all duration-1000 pointer-events-none">
+              <img
                 src={currentPhoto.storage_path}
                 alt="Background glow"
-                fill
-                className="object-cover"
+                className="w-full h-full object-cover"
+                loading="eager"
               />
             </div>
           )}
@@ -200,17 +199,16 @@ export function LiveSlideshow({ event, initialPhotos }: LiveSlideshowProps) {
                 transition={{ duration: 1.2, ease: 'easeInOut' }}
                 className="absolute inset-0 flex items-center justify-center p-4 sm:p-12 z-10"
               >
-                <div className="relative max-w-full max-h-full aspect-[4/3] sm:aspect-[16/10] rounded-3xl overflow-hidden shadow-2xl border border-white/10 flex items-center justify-center">
-                  <Image
+                <div className="relative max-w-full max-h-full aspect-[4/3] sm:aspect-[16/10] rounded-3xl overflow-hidden shadow-2xl border border-white/10 flex items-center justify-center bg-black/40">
+                  <img
                     src={currentPhoto.storage_path}
                     alt={currentPhoto.caption || 'Foto del evento'}
-                    fill
-                    priority
-                    className="object-contain"
+                    className="w-full h-full object-contain"
+                    loading="eager"
                   />
 
                   {/* Caption & Uploader Badge */}
-                  <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-6 sm:p-8 flex items-end justify-between">
+                  <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent p-6 sm:p-8 flex items-end justify-between">
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
                         <span className="px-3 py-1 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-300 font-bold text-xs sm:text-sm backdrop-blur-md">
@@ -241,16 +239,16 @@ export function LiveSlideshow({ event, initialPhotos }: LiveSlideshowProps) {
               >
                 <div className="max-w-xl w-full bg-neutral-900 border-2 border-amber-500/80 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6 text-center">
                   <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500 text-neutral-950 font-black text-xs sm:text-sm uppercase tracking-widest animate-bounce">
-                    <Sparkles className="w-4 h-4" />
+                    <Camera className="w-4 h-4" />
                     ¡Nueva Foto en Vivo!
                   </div>
 
-                  <div className="relative aspect-[4/3] rounded-2xl overflow-hidden border border-white/20">
-                    <Image
+                  <div className="relative aspect-[4/3] rounded-2xl overflow-hidden border border-white/20 bg-black/40">
+                    <img
                       src={newPhotoAlert.storage_path}
                       alt="Nueva foto"
-                      fill
-                      className="object-cover"
+                      className="w-full h-full object-cover"
+                      loading="eager"
                     />
                   </div>
 

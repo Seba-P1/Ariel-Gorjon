@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Sparkles, Calendar, Camera, Users, CheckCircle2, ArrowRight } from 'lucide-react';
+import { Calendar, Camera, Users, CheckCircle2, ArrowRight, Layers } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { createAdminClient } from '@/lib/supabase/admin';
@@ -51,7 +51,7 @@ export default async function DashboardPage() {
         <Card className="border-neutral-800 bg-neutral-900/60 backdrop-blur">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-neutral-300">
-              Confirmaciones (RSVP)
+              Confirmaciones de Asistencia
             </CardTitle>
             <Users className="w-4 h-4 text-emerald-400" />
           </CardHeader>
@@ -95,8 +95,8 @@ export default async function DashboardPage() {
         <Card className="border-neutral-800 bg-neutral-900/40">
           <CardHeader>
             <CardTitle className="text-lg text-neutral-200 flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-amber-400" />
-              18 Plantillas de Diseño
+              <Layers className="w-4 h-4 text-amber-400" />
+              18 Modelos de Tarjetas Digitales
             </CardTitle>
             <CardDescription className="text-neutral-400">
               Catálogo completo con 6 familias de diseño: Elegante Clásica, Moderna Minimal, Floral Romántica, Glamour Dorada, Neón Fiesta y Rústica Boho.

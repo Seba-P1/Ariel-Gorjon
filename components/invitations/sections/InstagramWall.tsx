@@ -49,13 +49,13 @@ export function InstagramWall({ theme, event, data }: InstagramWallProps) {
   };
 
   return (
-    <section className="py-16 px-6 max-w-3xl mx-auto text-center" id="invitation-instagram">
+    <section className="py-10 sm:py-16 px-4 sm:px-6 max-w-3xl mx-auto text-center" id="invitation-instagram">
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         whileInView={{ opacity: 1, scale: 1 }}
         viewport={{ once: true }}
         transition={{ duration: 0.8 }}
-        className="p-8 sm:p-12 rounded-3xl border shadow-sm space-y-6"
+        className="p-5 sm:p-10 rounded-2xl sm:rounded-3xl border shadow-sm space-y-5 sm:space-y-6"
         style={{
           backgroundColor: theme.palette.secondary,
           borderColor: `${theme.palette.primary}40`,

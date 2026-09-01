@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { motion } from 'framer-motion';
-import { ChevronDown, Calendar, MapPin, Sparkles, Heart } from 'lucide-react';
+import { ChevronDown, Calendar, MapPin, Heart } from 'lucide-react';
 import { InvitationTheme, Event, Guest } from '@/types/domain';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -32,8 +32,20 @@ export function Hero({ theme, event, guest, data }: HeroProps) {
 
   return (
     <section className="relative min-h-[90vh] md:min-h-screen w-full flex flex-col items-center justify-between p-6 text-center overflow-hidden">
-      {/* Background Image / Overlay */}
-      {event.cover_image_url ? (
+      {/* Background Video or Image / Overlay */}
+      {data?.videoUrl ? (
+        <div className="absolute inset-0 overflow-hidden">
+          <video
+            src={data.videoUrl}
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="w-full h-full object-cover scale-105"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/60 to-black/90 backdrop-blur-[1px]" />
+        </div>
+      ) : event.cover_image_url ? (
         <div
           className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 scale-105"
           style={{ backgroundImage: `url(${event.cover_image_url})` }}
@@ -58,7 +70,7 @@ export function Hero({ theme, event, guest, data }: HeroProps) {
             transition={{ duration: 0.8 }}
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full backdrop-blur-md shadow-lg border border-white/20 bg-white/10"
           >
-            <Sparkles className="w-4 h-4 text-[var(--theme-primary)]" />
+            <Heart className="w-3.5 h-3.5 text-[var(--theme-primary)] fill-current" />
             <span className="text-xs uppercase tracking-widest font-medium text-white">
               Invitación exclusiva para <strong className="underline underline-offset-4">{guest.full_name}</strong>
             </span>

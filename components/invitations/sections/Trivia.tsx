@@ -70,20 +70,20 @@ export function Trivia({ theme, data }: TriviaProps) {
   };
 
   return (
-    <section className="py-16 px-6 max-w-2xl mx-auto text-center" id="invitation-trivia">
+    <section className="py-10 sm:py-16 px-4 sm:px-6 max-w-2xl mx-auto text-center" id="invitation-trivia">
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         whileInView={{ opacity: 1, scale: 1 }}
         viewport={{ once: true }}
         transition={{ duration: 0.8 }}
-        className="p-8 sm:p-10 rounded-3xl border shadow-sm space-y-6"
+        className="p-5 sm:p-10 rounded-2xl sm:rounded-3xl border shadow-sm space-y-5 sm:space-y-6"
         style={{
           backgroundColor: theme.palette.secondary,
           borderColor: `${theme.palette.primary}40`,
         }}
       >
-        <div className="inline-flex p-4 rounded-full bg-[var(--theme-primary)]/10 text-[var(--theme-primary)] mb-2">
-          <HelpCircle className="w-8 h-8" />
+        <div className="inline-flex p-3 sm:p-4 rounded-full bg-[var(--theme-primary)]/10 text-[var(--theme-primary)] mb-1 sm:mb-2">
+          <HelpCircle className="w-6 h-6 sm:w-8 sm:h-8" />
         </div>
 
         <div className="space-y-2">

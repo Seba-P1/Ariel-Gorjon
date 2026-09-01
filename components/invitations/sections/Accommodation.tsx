@@ -40,39 +40,39 @@ export function Accommodation({ theme, data }: AccommodationProps) {
   ];
 
   return (
-    <section className="py-16 px-6 max-w-5xl mx-auto text-center" id="invitation-accommodation">
+    <section className="py-10 sm:py-16 px-4 sm:px-6 max-w-5xl mx-auto text-center" id="invitation-accommodation">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.8 }}
-        className="space-y-10"
+        className="space-y-6 sm:space-y-10"
       >
         <div className="space-y-2">
-          <div className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.25em] font-semibold text-[var(--theme-primary)]">
-            <Hotel className="w-4 h-4" />
+          <div className="inline-flex items-center gap-2 text-[11px] sm:text-xs uppercase tracking-[0.25em] font-semibold text-[var(--theme-primary)]">
+            <Hotel className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             <span>Hospedaje Recomendado</span>
           </div>
           <h2
-            className="text-3xl sm:text-5xl font-bold tracking-tight"
+            className="text-2xl sm:text-4xl md:text-5xl font-bold tracking-tight"
             style={{ fontFamily: theme.fonts.heading, color: theme.palette.text }}
           >
             {data?.title || 'Dónde Alojarse'}
           </h2>
-          <p className="text-sm opacity-80 max-w-md mx-auto" style={{ color: theme.palette.text }}>
+          <p className="text-xs sm:text-sm opacity-80 max-w-md mx-auto" style={{ color: theme.palette.text }}>
             {data?.subtitle || 'Opciones sugeridas para quienes viajan desde otras ciudades.'}
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 text-left">
           {places.map((place, idx) => (
             <motion.div
               key={place.name}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: idx * 0.15 }}
-              className="p-8 rounded-3xl border shadow-sm space-y-5 flex flex-col justify-between"
+              transition={{ duration: 0.5, delay: idx * 0.1 }}
+              className="p-5 sm:p-8 rounded-2xl sm:rounded-3xl border shadow-sm space-y-4 sm:space-y-5 flex flex-col justify-between"
               style={{
                 backgroundColor: theme.palette.secondary,
                 borderColor: `${theme.palette.primary}30`,
