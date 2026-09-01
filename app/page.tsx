@@ -159,56 +159,75 @@ export default async function LandingPage() {
         </div>
       </header>
 
-      {/* Hero Section */}
-      <section className="relative pt-16 sm:pt-24 pb-16 sm:pb-24 px-4 sm:px-6 overflow-hidden">
-        {/* Glow ambient effects */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] sm:w-[1000px] h-[350px] sm:h-[500px] bg-gradient-to-b from-amber-500/15 via-rose-500/5 to-transparent blur-3xl opacity-50 pointer-events-none" />
+      {/* Hero Section — Perfectly proportioned for Notebooks, Laptops & BenQ Displays */}
+      <section className="relative pt-8 sm:pt-12 md:pt-16 pb-12 sm:pb-16 px-4 sm:px-6 overflow-hidden">
+        {/* Ambient Glow */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] sm:w-[800px] h-[250px] sm:h-[380px] bg-gradient-to-b from-amber-500/15 via-amber-500/5 to-transparent blur-3xl opacity-60 pointer-events-none" />
 
-        <div className="max-w-5xl mx-auto text-center space-y-6 sm:space-y-8 relative z-10">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full bg-neutral-900/90 border border-amber-500/30 text-amber-400 text-[11px] sm:text-xs font-bold uppercase tracking-widest shadow-xl">
+        <div className="max-w-4xl mx-auto text-center space-y-4 sm:space-y-6 relative z-10">
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-neutral-900/90 border border-amber-500/30 text-amber-400 text-[10px] sm:text-xs font-bold uppercase tracking-wider shadow-lg">
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
             <span>{config.hero.badge}</span>
           </div>
 
-          <h1 className="text-3xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight leading-[1.1]">
+          {/* Heading */}
+          <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight leading-[1.12] text-neutral-100">
             {config.hero.titleMain}{' '}
             <span className="bg-gradient-to-r from-amber-200 via-amber-400 to-amber-500 bg-clip-text text-transparent">
               {config.hero.titleHighlight}
             </span>
           </h1>
 
-          <p className="text-sm sm:text-lg md:text-xl text-neutral-300 max-w-3xl mx-auto font-normal leading-relaxed px-2">
+          {/* Subtitle */}
+          <p className="text-xs sm:text-sm md:text-base text-neutral-300 max-w-2xl mx-auto font-normal leading-relaxed">
             {config.hero.description}
           </p>
 
           {/* Action CTAs */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 pt-2 sm:pt-4">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 sm:gap-3.5 pt-1 sm:pt-2">
             <Link href="/plantillas" className="w-full sm:w-auto">
-              <Button className="w-full sm:w-auto bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-600 hover:to-amber-500 text-neutral-950 font-black text-xs sm:text-sm px-6 sm:px-8 py-5 sm:py-6 rounded-2xl shadow-xl shadow-amber-500/25 transition-all hover:scale-105 cursor-pointer">
-                Explorar 18 Modelos en Vivo
-                <ArrowRight className="w-4 h-4 ml-2" />
+              <Button className="w-full sm:w-auto bg-amber-500 hover:bg-amber-600 text-neutral-950 font-black text-xs sm:text-sm px-6 sm:px-7 h-11 sm:h-12 rounded-xl shadow-lg shadow-amber-500/25 transition-all hover:scale-102 cursor-pointer">
+                Explorar 18 Modelos de Tarjetas
+                <ArrowRight className="w-4 h-4 ml-1.5" />
               </Button>
             </Link>
 
             <a href="#experiencia" className="w-full sm:w-auto">
               <Button
                 variant="outline"
-                className="w-full sm:w-auto border-neutral-800 hover:bg-neutral-900 text-neutral-200 font-semibold text-xs sm:text-sm px-6 sm:px-8 py-5 sm:py-6 rounded-2xl"
+                className="w-full sm:w-auto border-neutral-800 hover:bg-neutral-900 text-neutral-200 font-semibold text-xs sm:text-sm px-5 sm:px-6 h-11 sm:h-12 rounded-xl"
               >
                 <Tv className="w-4 h-4 mr-2 text-sky-400" />
                 ¿Cómo Funciona?
               </Button>
             </a>
           </div>
+
+          {/* Trust Value Badges */}
+          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 pt-2 text-[11px] sm:text-xs text-neutral-400">
+            <span className="flex items-center gap-1">
+              <span className="text-emerald-400 font-bold">✓</span> Sin descargar apps
+            </span>
+            <span className="hidden xs:inline text-neutral-700">•</span>
+            <span className="flex items-center gap-1">
+              <span className="text-emerald-400 font-bold">✓</span> Fotos en vivo por QR en pantalla
+            </span>
+            <span className="hidden xs:inline text-neutral-700">•</span>
+            <span className="flex items-center gap-1">
+              <span className="text-emerald-400 font-bold">✓</span> Confirmación de asistencia online
+            </span>
+          </div>
         </div>
       </section>
 
       {/* How it Works / Step by Step */}
-      <section id="experiencia" className="py-16 sm:py-24 px-4 sm:px-6 max-w-7xl mx-auto border-t border-neutral-900">
-        <div className="text-center space-y-3 sm:space-y-4 mb-12 sm:mb-16">
-          <p className="text-xs uppercase tracking-[0.3em] font-bold text-amber-400">
+      <section id="experiencia" className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 max-w-7xl mx-auto border-t border-neutral-900">
+        <div className="text-center space-y-2 sm:space-y-3 mb-8 sm:mb-12">
+          <p className="text-[11px] uppercase tracking-[0.25em] font-bold text-amber-400">
             Paso a Paso
           </p>
-          <h2 className="text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight">
+          <h2 className="text-xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-neutral-100">
             ¿Cómo funciona el servicio para tu fiesta?
           </h2>
           <p className="text-xs sm:text-sm text-neutral-400 max-w-2xl mx-auto">
@@ -216,7 +235,7 @@ export default async function LandingPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
           {steps.map((step) => {
             const Icon = step.icon;
             return (
@@ -243,12 +262,12 @@ export default async function LandingPage() {
       </section>
 
       {/* 18 Templates Showcase */}
-      <section id="plantillas" className="py-16 sm:py-24 px-4 sm:px-6 max-w-7xl mx-auto border-t border-neutral-900">
-        <div className="text-center space-y-3 sm:space-y-4 mb-12 sm:mb-16">
-          <p className="text-xs uppercase tracking-[0.3em] font-bold text-amber-400">
+      <section id="plantillas" className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 max-w-7xl mx-auto border-t border-neutral-900">
+        <div className="text-center space-y-2 sm:space-y-3 mb-8 sm:mb-12">
+          <p className="text-[11px] uppercase tracking-[0.25em] font-bold text-amber-400">
             Colección Exclusiva
           </p>
-          <h2 className="text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight">
+          <h2 className="text-xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-neutral-100">
             18 Modelos en 6 Familias de Diseño
           </h2>
           <p className="text-xs sm:text-sm text-neutral-400 max-w-2xl mx-auto">
@@ -302,24 +321,24 @@ export default async function LandingPage() {
       </section>
 
       {/* Realistic Live Screen Feature Section */}
-      <section id="pantalla-en-vivo" className="py-16 sm:py-24 px-4 sm:px-6 max-w-7xl mx-auto border-t border-neutral-900">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 items-center">
-          <div className="space-y-5 sm:space-y-6">
+      <section id="pantalla-en-vivo" className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 max-w-7xl mx-auto border-t border-neutral-900">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-10 items-center">
+          <div className="space-y-4 sm:space-y-5">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/10 border border-sky-500/30 text-sky-400 text-xs font-bold uppercase tracking-wider">
               <Tv className="w-3.5 h-3.5" />
               <span>Magia en Vivo durante la fiesta</span>
             </div>
 
-            <h2 className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight leading-tight">
+            <h2 className="text-xl sm:text-3xl md:text-4xl font-black tracking-tight leading-tight text-neutral-100">
               Tus invitados son los fotógrafos de la noche
             </h2>
 
-            <p className="text-xs sm:text-base text-neutral-400 leading-relaxed">
+            <p className="text-xs sm:text-sm md:text-base text-neutral-400 leading-relaxed">
               Durante la recepción y el baile, los invitados escanean los códigos QR impresos en las mesas.
               En menos de 3 segundos, sus fotos aparecen proyectadas en la pantalla del salón con su dedicatoria.
             </p>
 
-            <ul className="space-y-3 text-xs sm:text-sm text-neutral-300">
+            <ul className="space-y-2.5 text-xs sm:text-sm text-neutral-300">
               <li className="flex items-center gap-2.5 sm:gap-3">
                 <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
                 <span><strong>Sin descargas:</strong> Funciona directo en el navegador de iPhone y Android sin instalar nada.</span>
@@ -336,7 +355,7 @@ export default async function LandingPage() {
           </div>
 
           {/* Scenic Realistic Projection Stage */}
-          <div className="relative rounded-3xl overflow-hidden border border-neutral-800 shadow-2xl bg-neutral-900/90 p-4 sm:p-6 space-y-4">
+          <div className="relative rounded-3xl overflow-hidden border border-neutral-800 shadow-2xl bg-neutral-900/90 p-3.5 sm:p-5 space-y-3">
             {/* Ambient Background & LED Screen Stage */}
             <div className="relative aspect-[16/10] sm:aspect-video rounded-2xl overflow-hidden border border-white/10 bg-black shadow-inner flex items-center justify-center">
               {/* Photo */}
@@ -389,23 +408,23 @@ export default async function LandingPage() {
       </section>
 
       {/* Reviews / Social Proof */}
-      <section className="py-16 sm:py-20 px-4 sm:px-6 max-w-7xl mx-auto border-t border-neutral-900">
-        <div className="text-center space-y-3 mb-10 sm:mb-12">
-          <p className="text-xs uppercase tracking-[0.3em] font-bold text-amber-400">
+      <section className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 max-w-7xl mx-auto border-t border-neutral-900">
+        <div className="text-center space-y-2 sm:space-y-3 mb-8 sm:mb-12">
+          <p className="text-[11px] uppercase tracking-[0.25em] font-bold text-amber-400">
             Testimonios Reales
           </p>
-          <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight">
+          <h2 className="text-xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-neutral-100">
             Lo que dicen quienes ya celebraron con nosotros
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5">
           {config.reviews.map((rev) => (
             <div
               key={rev.id}
-              className="p-6 sm:p-8 rounded-2xl sm:rounded-3xl bg-neutral-900/50 border border-neutral-800/80 space-y-4 flex flex-col justify-between shadow-xl"
+              className="p-5 sm:p-6 rounded-2xl sm:rounded-3xl bg-neutral-900/50 border border-neutral-800/80 space-y-3.5 flex flex-col justify-between shadow-xl"
             >
-              <div className="space-y-3">
+              <div className="space-y-2.5">
                 <div className="flex items-center gap-1 text-amber-400">
                   {[...Array(rev.stars)].map((_, i) => (
                     <Star key={i} className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-amber-400" />
@@ -416,7 +435,7 @@ export default async function LandingPage() {
                 </p>
               </div>
 
-              <div className="pt-3 sm:pt-4 border-t border-neutral-800/80">
+              <div className="pt-3 border-t border-neutral-800/80">
                 <p className="text-xs font-bold text-neutral-200">{rev.author}</p>
                 <p className="text-[10px] text-neutral-500">{rev.event}</p>
               </div>
@@ -426,12 +445,12 @@ export default async function LandingPage() {
       </section>
 
       {/* Pricing / Packages */}
-      <section id="planes" className="py-16 sm:py-24 px-4 sm:px-6 max-w-7xl mx-auto border-t border-neutral-900">
-        <div className="text-center space-y-3 sm:space-y-4 mb-12 sm:mb-16">
-          <p className="text-xs uppercase tracking-[0.3em] font-bold text-amber-400">
+      <section id="planes" className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 max-w-7xl mx-auto border-t border-neutral-900">
+        <div className="text-center space-y-2 sm:space-y-3 mb-8 sm:mb-12">
+          <p className="text-[11px] uppercase tracking-[0.25em] font-bold text-amber-400">
             Precios Claros & Sin Sorpresas
           </p>
-          <h2 className="text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight">
+          <h2 className="text-xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-neutral-100">
             Elegí el plan perfecto para tu evento
           </h2>
         </div>
