@@ -37,7 +37,7 @@ Plataforma SaaS multi-evento para Ariel. Cada evento nuevo = configuración en e
 └───────────────────────┬─────────────────────────────────────┘
                         │  HTTPS
 ┌───────────────────────▼─────────────────────────────────────┐
-│                    NEXT.JS 14 (Vercel)                      │
+│                    NEXT.JS 14 (Netlify)                     │
 │  ┌──────────────┐ ┌──────────────┐ ┌───────────────────┐    │
 │  │  Landing     │ │ Invitaciones │ │  Panel Admin      │    │
 │  │  público     │ │  públicas    │ │  (protegido)      │    │
@@ -83,7 +83,7 @@ Plataforma SaaS multi-evento para Ariel. Cada evento nuevo = configuración en e
 | Export Excel / ZIP     | `xlsx` + `jszip` + `file-saver`           | última         |
 | Iconografía            | `lucide-react`                            | última         |
 | Fuentes                | `next/font` (Google Fonts)                | integrado      |
-| Deploy                 | Vercel                                    | Cloud          |
+| Deploy                 | Netlify (OpenNext adapter)                | Cloud          |
 | Dominio                | (adquirir en Namecheap / NIC.ar)          | —              |
 
 **Ventaja clave del stack**: Supabase reemplaza 4 servicios (DB + Auth + Storage + Realtime) con una sola consola, un solo SDK, y RLS integrado.
@@ -1023,7 +1023,7 @@ const cspHeader = `
 - [ ] Rate limit en `/api/upload`, `/api/rsvp`, `/api/moderate`.
 - [ ] Validación Zod en TODAS las API routes.
 - [ ] CSP headers configurados.
-- [ ] HSTS activo (Vercel lo hace por defecto en HTTPS).
+- [ ] HSTS activo (Netlify lo hace por defecto en HTTPS).
 - [ ] Auth con contraseñas ≥ 12 chars + verificación de email.
 - [ ] Backups automáticos de Supabase habilitados (Point-in-time recovery si es plan Pro).
 - [ ] Auditoría (`audit_log`) escribe en cada acción sensible.
@@ -1611,7 +1611,7 @@ TAREA
    - Helpers de compresión, validación Zod, deep merge de themes, slugify.
 
 3) Endurecimiento:
-   - Instalá y configurá `@vercel/edge-config` o similar para feature flags.
+    - Feature flags con variables de entorno en Netlify (o similar).
    - Configurá `next.config.js` con:
      - `poweredByHeader: false`
      - Headers completos (CSP, HSTS, X-Frame, etc).
@@ -1637,11 +1637,11 @@ TAREA
 
 7) GitHub Actions `.github/workflows/ci.yml`:
    - En cada PR: lint + typecheck + tests unitarios + build.
-   - En main: deploy a Vercel (via integración nativa).
+   - En main: deploy a Netlify (via integración nativa de Git).
 
 8) Deploy checklist:
-   - Configurar dominio en Vercel.
-   - Variables de entorno en Vercel (prod).
+    - Configurar dominio en Netlify.
+    - Variables de entorno en Netlify (prod).
    - DNS: A + CNAME.
    - Supabase: backups habilitados, alertas configuradas.
    - Verificar CSP no rompe nada en prod.
@@ -1653,7 +1653,7 @@ CRITERIOS DE ACEPTACIÓN
 - Todos los tests pasan.
 - Lighthouse ≥ 90 en todas las páginas.
 - No hay warnings en build.
-- Deploy automático desde main a Vercel funciona.
+- Deploy automático desde main a Netlify funciona.
 - Documentación completa.
 
 FORMATO DE SALIDA
@@ -1668,8 +1668,8 @@ Todos los archivos + workflows + scripts.
 
 1. **Supabase**: crear proyecto → ejecutar bloques SQL 4.1 a 4.6 en orden → verificar RLS en el UI (Tables → RLS toggle).
 2. **Repo GitHub**: crear repo privado → push del código.
-3. **Vercel**: importar repo → agregar variables de entorno → deploy.
-4. **Dominio**: configurar DNS (A → 76.76.21.21 para Vercel, o CNAME según el caso).
+3. **Netlify**: importar repo (Add new site → Import an existing project → GitHub) → agregar variables de entorno → deploy. El runtime de Next.js (OpenNext adapter) se configura solo, soporta Next.js 16 sin configuración extra.
+4. **Dominio**: configurar DNS (A → 75.2.60.5 para Netlify, CNAME www → `<site>.netlify.app`; el panel de Netlify muestra los valores exactos).
 5. **Registrarse en la app**: crear tu usuario con el email de Ariel → correr bloque 4.7 para hacerlo superadmin.
 6. **Smoke test**: crear evento demo → publicar → probar invitación, RSVP, subida de foto, pantalla.
 
@@ -1683,7 +1683,7 @@ Todos los archivos + workflows + scripts.
 
 - Free/Pro de Supabase alcanza hasta ~500 eventos con ~1000 fotos c/u sin problemas.
 - Si crece: migrar Storage a Cloudflare R2 (mismo Postgres, solo cambia el proveedor de archivos).
-- CDN: Vercel + Supabase ya tienen CDN incluido.
+- CDN: Netlify + Supabase ya tienen CDN incluido.
 
 ---
 
@@ -1719,7 +1719,7 @@ Todos los archivos + workflows + scripts.
 
 ### DevOps
 
-- [ ] CI/CD Vercel automático.
+- [ ] CI/CD Netlify automático.
 - [ ] Tests E2E pasan.
 - [ ] Backups Supabase activos.
 - [ ] Monitoreo básico configurado.
@@ -1745,7 +1745,7 @@ Cada prompt de Antigravity está diseñado para ser autocontenido: podés ejecut
 3. Ejecutar Prompt Fase 0 en Antigravity.
 4. Ejecutar Prompts 1 a 7 en orden, verificando cada uno.
 5. Ejecutar bloque 4.7 después de registrar tu usuario admin.
-6. Deploy a Vercel.
+6. Deploy a Netlify.
 7. Correr checklist final.
 
 Todo está pensado para ser modificable: si mañana Ariel quiere una plantilla nueva, se agrega un registro en `templates`. Si quiere un módulo de pagos, se suma sin romper nada. Si quiere un módulo de emails automáticos, se enchufa Resend. Nada está acoplado.
