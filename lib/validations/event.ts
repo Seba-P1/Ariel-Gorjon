@@ -12,7 +12,7 @@ export const eventSchema = z.object({
   cover_image_url: z.string().url().nullable().optional(),
   hashtag: z.string().nullable().optional(),
   instagram_handle: z.string().nullable().optional(),
-  music_url: z.string().url().nullable().optional(),
+  music_url: z.string().nullable().optional(),
   album_enabled: z.boolean().default(true),
   album_manual_approval: z.boolean().default(false),
   album_slide_duration_ms: z.number().min(1500).max(15000).default(3000),

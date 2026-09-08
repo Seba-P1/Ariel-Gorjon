@@ -187,7 +187,8 @@ export function InvitationRenderer({ event, template, guest }: InvitationRendere
       case 'gifts':
         return <Gifts key={section.id} theme={theme} data={data} />;
       case 'music':
-        return <MusicPlayer key={section.id} theme={theme} event={event} data={data} />;
+        // Rendered as floating ambient overlay outside the in-flow sections
+        return null;
       case 'song-requests':
         return <SongRequests key={section.id} theme={theme} event={event} data={data} />;
       case 'instagram-wall':
@@ -204,6 +205,12 @@ export function InvitationRenderer({ event, template, guest }: InvitationRendere
         return null;
     }
   };
+
+  // Determine if floating music player should be active
+  const musicSection = sections.find((s: SectionConfig) => s.type === 'music');
+  const hasMusicUrl = Boolean(event.music_url || rawThemeConfig.music_url || rawThemeConfig.music?.musicUrl);
+  const isMusicActive = musicSection ? musicSection.enabled !== false : hasMusicUrl;
+  const musicData = getSectionData('music', musicSection?.data || {});
 
   return (
     <div
@@ -226,6 +233,11 @@ export function InvitationRenderer({ event, template, guest }: InvitationRendere
       <main id="invitation-content" className="relative z-10 space-y-8 pb-20">
         {sections.map((section: SectionConfig) => renderSection(section))}
       </main>
+
+      {/* Floating Ambient Music Player */}
+      {isMusicActive && (
+        <MusicPlayer theme={theme} event={event} data={musicData} />
+      )}
 
       {/* Footer / Branding */}
       <footer className="relative z-10 border-t py-10 px-6 text-center text-xs space-y-2 opacity-75" style={{ borderColor: `${theme.palette.primary}20` }}>

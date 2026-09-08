@@ -35,7 +35,13 @@ import {
   Video,
   Radio,
   Layout,
+  HardDrive,
+  Volume2,
+  Info,
+  AlertCircle,
 } from 'lucide-react';
+import { YouTubeIcon } from '@/components/ui/icons/YouTubeIcon';
+import { parseAudioSource, suggestSongTitle } from '@/lib/music';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -72,6 +78,14 @@ export function EventEditorStudio({ event, templates, clients = [] }: EventEdito
   // Cover & Music
   const [coverImageUrl, setCoverImageUrl] = React.useState(event.cover_image_url || '');
   const [musicUrl, setMusicUrl] = React.useState(event.music_url || '');
+  const parsedMusic = React.useMemo(() => parseAudioSource(musicUrl), [musicUrl]);
+  const [musicSourceMode, setMusicSourceMode] = React.useState<'upload' | 'youtube' | 'drive' | 'direct'>(() => {
+    const initialParsed = parseAudioSource(event.music_url || '');
+    if (initialParsed.type === 'youtube') return 'youtube';
+    if (initialParsed.type === 'drive') return 'drive';
+    if (initialParsed.type === 'direct' && !event.music_url?.includes('event-music')) return 'direct';
+    return 'upload';
+  });
 
   // Locations & Lat/Lng
   const [locationName, setLocationName] = React.useState(event.location_name || '');
@@ -277,6 +291,10 @@ export function EventEditorStudio({ event, templates, clients = [] }: EventEdito
       setIsUploadingMusic(true);
       const url = await handleFileUpload(file, 'music');
       setMusicUrl(url);
+      const suggested = suggestSongTitle(file.name);
+      if (!musicTitle || musicTitle.includes('A Thousand Years')) {
+        setMusicTitle(suggested);
+      }
       toast.success('Pista de música subida con éxito');
     } catch (err: any) {
       toast.error('Error al subir música: ' + err.message);
@@ -1044,67 +1062,307 @@ export function EventEditorStudio({ event, templates, clients = [] }: EventEdito
         </TabsContent>
 
         {/* 5. MUSIC TAB */}
-        <TabsContent value="music">
+        <TabsContent value="music" className="space-y-6">
           <Card className="bg-neutral-900/70 border-neutral-800/80 shadow-xl rounded-3xl">
             <CardHeader className="p-6 md:p-8 border-b border-neutral-800/60">
-              <CardTitle className="text-lg font-bold text-neutral-100 flex items-center gap-2.5">
-                <Music className="w-5 h-5 text-amber-400" />
-                Música de Fondo de la Invitación
-              </CardTitle>
-              <CardDescription className="text-xs text-neutral-400">
-                Pista musical que sonará cuando los invitados interactúen con la tarjeta virtual.
-              </CardDescription>
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <div>
+                  <CardTitle className="text-lg font-bold text-neutral-100 flex items-center gap-2.5">
+                    <Music className="w-5 h-5 text-amber-400" />
+                    Música de Fondo de la Invitación
+                  </CardTitle>
+                  <CardDescription className="text-xs text-neutral-400 mt-1">
+                    Sonará automáticamente cuando los invitados abran o interactúen con la tarjeta.
+                  </CardDescription>
+                </div>
+                {parsedMusic.isValid && (
+                  <Badge variant="outline" className="self-start sm:self-auto border-emerald-500/30 text-emerald-400 bg-emerald-500/10 text-[11px] py-1 px-3">
+                    Música activa
+                  </Badge>
+                )}
+              </div>
             </CardHeader>
             <CardContent className="p-6 md:p-8 space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2.5">
-                  <Label className="text-sm font-semibold text-neutral-200">Nombre de la Canción / Artista</Label>
-                  <Input
-                    value={musicTitle}
-                    onChange={(e) => setMusicTitle(e.target.value)}
-                    placeholder="Ej: A Thousand Years — Christina Perri"
-                    className="bg-neutral-950/80 border-neutral-800 text-sm h-11 rounded-xl"
-                  />
-                </div>
+              {/* Song Title / Artist Name */}
+              <div className="space-y-2.5">
+                <Label className="text-sm font-semibold text-neutral-200">
+                  Nombre de la Canción / Artista
+                </Label>
+                <Input
+                  value={musicTitle}
+                  onChange={(e) => setMusicTitle(e.target.value)}
+                  placeholder="Ej: A Thousand Years — Christina Perri"
+                  className="bg-neutral-950/80 border-neutral-800 text-sm h-11 rounded-xl"
+                />
+                <p className="text-[11px] text-neutral-500">
+                  Es el título que se mostrará en el botón flotante de la invitación.
+                </p>
+              </div>
 
-                <div className="space-y-2.5">
-                  <Label className="text-sm font-semibold text-neutral-200">Subir Audio MP3 Directo</Label>
-                  <label className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-neutral-800 hover:bg-neutral-700 text-neutral-200 text-xs font-semibold cursor-pointer transition-colors h-11 shadow-sm">
+              {/* Source Mode Selector Tabs */}
+              <div className="space-y-3 pt-2">
+                <Label className="text-sm font-semibold text-neutral-200">
+                  Elegí cómo cargar la música:
+                </Label>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                  <button
+                    type="button"
+                    onClick={() => setMusicSourceMode('upload')}
+                    className={`flex items-center justify-center gap-2 p-3 rounded-2xl border text-xs font-semibold transition-all cursor-pointer ${
+                      musicSourceMode === 'upload'
+                        ? 'bg-amber-500/15 text-amber-300 border-amber-500/40 shadow-md'
+                        : 'bg-neutral-950/60 text-neutral-400 border-neutral-800 hover:bg-neutral-800 hover:text-neutral-200'
+                    }`}
+                  >
                     <Upload className="w-4 h-4" />
-                    <span>{isUploadingMusic ? 'Subiendo pista...' : 'Seleccionar Archivo MP3 / WAV'}</span>
+                    <span>Subir de mi PC</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setMusicSourceMode('youtube')}
+                    className={`flex items-center justify-center gap-2 p-3 rounded-2xl border text-xs font-semibold transition-all cursor-pointer ${
+                      musicSourceMode === 'youtube'
+                        ? 'bg-rose-500/15 text-rose-300 border-rose-500/40 shadow-md'
+                        : 'bg-neutral-950/60 text-neutral-400 border-neutral-800 hover:bg-neutral-800 hover:text-neutral-200'
+                    }`}
+                  >
+                    <YouTubeIcon className="w-4 h-4" />
+                    <span>YouTube</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setMusicSourceMode('drive')}
+                    className={`flex items-center justify-center gap-2 p-3 rounded-2xl border text-xs font-semibold transition-all cursor-pointer ${
+                      musicSourceMode === 'drive'
+                        ? 'bg-sky-500/15 text-sky-300 border-sky-500/40 shadow-md'
+                        : 'bg-neutral-950/60 text-neutral-400 border-neutral-800 hover:bg-neutral-800 hover:text-neutral-200'
+                    }`}
+                  >
+                    <HardDrive className="w-4 h-4" />
+                    <span>Google Drive</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setMusicSourceMode('direct')}
+                    className={`flex items-center justify-center gap-2 p-3 rounded-2xl border text-xs font-semibold transition-all cursor-pointer ${
+                      musicSourceMode === 'direct'
+                        ? 'bg-purple-500/15 text-purple-300 border-purple-500/40 shadow-md'
+                        : 'bg-neutral-950/60 text-neutral-400 border-neutral-800 hover:bg-neutral-800 hover:text-neutral-200'
+                    }`}
+                  >
+                    <LinkIcon className="w-4 h-4" />
+                    <span>Enlace MP3</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Source Option 1: Upload from PC */}
+              {musicSourceMode === 'upload' && (
+                <div className="p-5 rounded-2xl bg-neutral-950/60 border border-neutral-800/80 space-y-4">
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <h4 className="text-sm font-semibold text-neutral-200">Subir archivo de audio desde tu computadora</h4>
+                      <p className="text-xs text-neutral-400 mt-1">
+                        Formatos soportados: MP3, WAV, M4A o AAC (hasta 50 MB).
+                      </p>
+                    </div>
+                  </div>
+
+                  <label className="flex items-center justify-center gap-2.5 px-6 py-4 rounded-xl bg-neutral-800/80 hover:bg-neutral-700 text-neutral-200 text-xs font-semibold cursor-pointer transition-colors border border-neutral-700 shadow-sm">
+                    <Upload className="w-4 h-4 text-amber-400" />
+                    <span>{isUploadingMusic ? 'Subiendo y procesando pista...' : 'Elegir archivo de música (.mp3 / .wav / .m4a)'}</span>
                     <input
                       type="file"
-                      accept="audio/*"
+                      accept="audio/*,.mp3,.wav,.m4a,.aac,.ogg"
                       onChange={onMusicFileChange}
                       disabled={isUploadingMusic}
                       className="hidden"
                     />
                   </label>
                 </div>
-              </div>
+              )}
 
-              <div className="space-y-2.5">
-                <Label className="text-sm font-semibold text-neutral-200">URL del Archivo de Audio (MP3)</Label>
-                <Input
-                  value={musicUrl}
-                  onChange={(e) => setMusicUrl(e.target.value)}
-                  placeholder="https://.../cancion.mp3"
-                  className="bg-neutral-950/80 border-neutral-800 text-xs font-mono h-11 rounded-xl"
-                />
-              </div>
-
-              {musicUrl && (
-                <div className="p-5 rounded-2xl bg-neutral-950/90 border border-neutral-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-inner">
-                  <div className="flex items-center gap-3.5">
-                    <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400">
-                      <Music className="w-5 h-5 animate-pulse" />
-                    </div>
+              {/* Source Option 2: YouTube Audio */}
+              {musicSourceMode === 'youtube' && (
+                <div className="p-5 rounded-2xl bg-neutral-950/60 border border-neutral-800/80 space-y-4">
+                  <div className="flex items-start justify-between gap-4">
                     <div>
-                      <span className="text-sm font-bold text-neutral-200 block">{musicTitle}</span>
-                      <span className="text-[11px] text-neutral-500 font-mono truncate max-w-sm block">{musicUrl}</span>
+                      <h4 className="text-sm font-semibold text-neutral-200 flex items-center gap-2">
+                        <YouTubeIcon className="w-4 h-4 text-rose-400" />
+                        Canción desde YouTube (Solo Audio)
+                      </h4>
+                      <p className="text-xs text-neutral-400 mt-1">
+                        Pegá cualquier enlace de video o canción de YouTube. En la tarjeta sonará únicamente el audio en bucle sin mostrar el video.
+                      </p>
                     </div>
                   </div>
-                  <audio controls src={musicUrl} className="h-9 max-w-xs w-full" />
+
+                  <div className="space-y-2">
+                    <Input
+                      value={musicUrl}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setMusicUrl(val);
+                        const p = parseAudioSource(val);
+                        if (p.type === 'youtube' && (!musicTitle || musicTitle.includes('A Thousand Years'))) {
+                          setMusicTitle('Tema musical de YouTube');
+                        }
+                      }}
+                      placeholder="https://www.youtube.com/watch?v=... o https://youtu.be/..."
+                      className="bg-neutral-900 border-neutral-700 text-xs font-mono h-11 rounded-xl text-neutral-100"
+                    />
+                  </div>
+
+                  {parsedMusic.type === 'youtube' ? (
+                    <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs flex items-center gap-2.5">
+                      <CheckCircle2 className="w-4 h-4 shrink-0" />
+                      <span>
+                        Enlace de YouTube válido detectado (ID: <strong className="font-mono">{parsedMusic.youtubeId}</strong>). La música sonará en segundo plano.
+                      </span>
+                    </div>
+                  ) : musicUrl ? (
+                    <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs flex items-center gap-2.5">
+                      <AlertCircle className="w-4 h-4 shrink-0" />
+                      <span>Pegá un enlace válido de YouTube (ej: https://www.youtube.com/watch?v=...)</span>
+                    </div>
+                  ) : null}
+                </div>
+              )}
+
+              {/* Source Option 3: Google Drive */}
+              {musicSourceMode === 'drive' && (
+                <div className="p-5 rounded-2xl bg-neutral-950/60 border border-neutral-800/80 space-y-4">
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <h4 className="text-sm font-semibold text-neutral-200 flex items-center gap-2">
+                        <HardDrive className="w-4 h-4 text-sky-400" />
+                        Canción desde Google Drive
+                      </h4>
+                      <p className="text-xs text-neutral-400 mt-1">
+                        Pegá el enlace para compartir de un archivo de audio guardado en tu Google Drive.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Input
+                      value={musicUrl}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setMusicUrl(val);
+                        const p = parseAudioSource(val);
+                        if (p.type === 'drive' && (!musicTitle || musicTitle.includes('A Thousand Years'))) {
+                          setMusicTitle('Canción desde Google Drive');
+                        }
+                      }}
+                      placeholder="https://drive.google.com/file/d/1X-example-id/view?usp=sharing"
+                      className="bg-neutral-900 border-neutral-700 text-xs font-mono h-11 rounded-xl text-neutral-100"
+                    />
+                  </div>
+
+                  {parsedMusic.type === 'drive' ? (
+                    <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs flex items-center gap-2.5">
+                      <CheckCircle2 className="w-4 h-4 shrink-0" />
+                      <span>
+                        Archivo de Google Drive detectado (ID: <strong className="font-mono">{parsedMusic.driveId}</strong>). Se transmitirá automáticamente.
+                      </span>
+                    </div>
+                  ) : null}
+
+                  <div className="p-3.5 rounded-xl bg-sky-500/10 border border-sky-500/20 text-sky-300 text-xs flex items-start gap-2.5">
+                    <Info className="w-4 h-4 shrink-0 mt-0.5" />
+                    <span>
+                      <strong>Importante:</strong> En Google Drive, hacé clic derecho en el archivo de audio &gt; <em>Compartir</em> &gt; cambiar el acceso general a <strong>"Cualquiera con el enlace"</strong> (Lector) para que los invitados puedan escucharlo.
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              {/* Source Option 4: Direct URL */}
+              {musicSourceMode === 'direct' && (
+                <div className="p-5 rounded-2xl bg-neutral-950/60 border border-neutral-800/80 space-y-4">
+                  <div className="space-y-2.5">
+                    <Label className="text-sm font-semibold text-neutral-200">URL Directa del Archivo de Audio</Label>
+                    <Input
+                      value={musicUrl}
+                      onChange={(e) => setMusicUrl(e.target.value)}
+                      placeholder="https://.../cancion.mp3"
+                      className="bg-neutral-900 border-neutral-700 text-xs font-mono h-11 rounded-xl text-neutral-100"
+                    />
+                    <p className="text-[11px] text-neutral-500">
+                      Enlace directo HTTPS que apunte a un archivo .mp3, .wav o .m4a en cualquier servidor.
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Live Preview Player in Admin Studio */}
+              {musicUrl && (
+                <div className="p-5 rounded-2xl bg-neutral-950 border border-neutral-800 space-y-4 shadow-xl">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-neutral-800/60 pb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400">
+                        <Volume2 className="w-5 h-5 animate-pulse" />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-bold text-neutral-100">{musicTitle || 'Música de fondo'}</span>
+                          <Badge variant="outline" className="text-[10px] uppercase font-mono px-2 py-0 border-neutral-700 text-neutral-300">
+                            {parsedMusic.type === 'youtube' ? 'YouTube' : parsedMusic.type === 'drive' ? 'Google Drive' : 'Audio MP3'}
+                          </Badge>
+                        </div>
+                        <span className="text-[11px] text-neutral-500 font-mono truncate max-w-sm block mt-0.5">
+                          {musicUrl}
+                        </span>
+                      </div>
+                    </div>
+
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setMusicUrl('')}
+                      className="text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 text-xs h-8 px-3 rounded-lg"
+                    >
+                      <Trash2 className="w-3.5 h-3.5 mr-1.5" />
+                      Quitar música
+                    </Button>
+                  </div>
+
+                  {/* Player Element */}
+                  <div className="pt-1">
+                    {parsedMusic.type === 'youtube' ? (
+                      <div className="space-y-3">
+                        <div className="rounded-xl overflow-hidden border border-neutral-800 bg-black aspect-video max-w-sm">
+                          <iframe
+                            src={`https://www.youtube-nocookie.com/embed/${parsedMusic.youtubeId}?rel=0`}
+                            title="Previsualización de YouTube"
+                            className="w-full h-full"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                          />
+                        </div>
+                        <p className="text-[11px] text-neutral-400 flex items-center gap-1.5">
+                          <Info className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                          <span>Aquí podés escucharla para verificarla. En la invitación de los invitados <strong>solo sonará la música de fondo</strong>, sin ventana de video.</span>
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="space-y-2">
+                        <audio
+                          controls
+                          src={parsedMusic.resolvedUrl}
+                          className="w-full max-w-md h-10 rounded-lg"
+                        />
+                        <p className="text-[11px] text-neutral-500">
+                          Previsualizador de audio: presioná Play para escuchar la pista antes de guardar.
+                        </p>
+                      </div>
+                    )}
+                  </div>
                 </div>
               )}
             </CardContent>
