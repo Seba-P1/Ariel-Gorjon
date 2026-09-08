@@ -39,6 +39,7 @@ import {
   Volume2,
   Info,
   AlertCircle,
+  RefreshCw,
 } from 'lucide-react';
 import { YouTubeIcon } from '@/components/ui/icons/YouTubeIcon';
 import { parseAudioSource, suggestSongTitle } from '@/lib/music';
@@ -156,6 +157,29 @@ export function EventEditorStudio({ event, templates, clients = [] }: EventEdito
 
   // Music details
   const [musicTitle, setMusicTitle] = React.useState(themeConfig.music_title || 'A Thousand Years — Instrumental');
+  const [isFetchingMusicInfo, setIsFetchingMusicInfo] = React.useState(false);
+
+  const fetchSongTitle = React.useCallback(async (url: string) => {
+    if (!url || typeof url !== 'string' || !url.trim()) return;
+    const trimmed = url.trim();
+    if (!trimmed.startsWith('http') && !trimmed.startsWith('/')) return;
+
+    try {
+      setIsFetchingMusicInfo(true);
+      const res = await fetch(`/api/audio/info?url=${encodeURIComponent(trimmed)}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.ok && data.title) {
+          setMusicTitle(data.title);
+          toast.info(`Título detectado automáticamente: "${data.title}"`);
+        }
+      }
+    } catch (err) {
+      console.warn('Error fetching song title:', err);
+    } finally {
+      setIsFetchingMusicInfo(false);
+    }
+  }, []);
 
   // Story / Timeline
   const [storyTitle, setStoryTitle] = React.useState(themeConfig.story_title || 'Nuestra Historia');
@@ -292,10 +316,8 @@ export function EventEditorStudio({ event, templates, clients = [] }: EventEdito
       const url = await handleFileUpload(file, 'music');
       setMusicUrl(url);
       const suggested = suggestSongTitle(file.name);
-      if (!musicTitle || musicTitle.includes('A Thousand Years')) {
-        setMusicTitle(suggested);
-      }
-      toast.success('Pista de música subida con éxito');
+      setMusicTitle(suggested);
+      toast.success(`Pista de música subida con éxito: "${suggested}"`);
     } catch (err: any) {
       toast.error('Error al subir música: ' + err.message);
     } finally {
@@ -394,7 +416,7 @@ export function EventEditorStudio({ event, templates, clients = [] }: EventEdito
         trivia_questions: triviaQuestions,
       };
 
-      const res = await updateEvent(event.id, {
+      const payload = {
         title,
         slug,
         event_type: eventType,
@@ -416,15 +438,36 @@ export function EventEditorStudio({ event, templates, clients = [] }: EventEdito
         album_transition: albumTransition,
         theme_config: mergedThemeConfig,
         sections_config: activeSections,
-      });
+      };
 
-      if (!res.ok) {
-        toast.error('Error al guardar: ' + res.error);
-        return;
+      let success = false;
+      try {
+        const res = await updateEvent(event.id, payload);
+        if (res.ok) {
+          success = true;
+        } else {
+          throw new Error(res.error || 'Error al guardar');
+        }
+      } catch (actionErr: any) {
+        console.warn('Server Action failed, attempting direct REST save:', actionErr);
+        const restRes = await fetch(`/api/events/${event.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        const restData = await restRes.json();
+        if (restRes.ok && restData.ok) {
+          success = true;
+        } else {
+          toast.error('Error al guardar: ' + (restData.error || actionErr.message));
+          return;
+        }
       }
 
-      toast.success('¡Evento y diseño actualizados exitosamente!');
-      router.refresh();
+      if (success) {
+        toast.success('¡Evento y diseño actualizados exitosamente!');
+        router.refresh();
+      }
     } catch (err: any) {
       toast.error('Error inesperado: ' + err.message);
     } finally {
@@ -1085,17 +1128,42 @@ export function EventEditorStudio({ event, templates, clients = [] }: EventEdito
             <CardContent className="p-6 md:p-8 space-y-6">
               {/* Song Title / Artist Name */}
               <div className="space-y-2.5">
-                <Label className="text-sm font-semibold text-neutral-200">
-                  Nombre de la Canción / Artista
-                </Label>
-                <Input
-                  value={musicTitle}
-                  onChange={(e) => setMusicTitle(e.target.value)}
-                  placeholder="Ej: A Thousand Years — Christina Perri"
-                  className="bg-neutral-950/80 border-neutral-800 text-sm h-11 rounded-xl"
-                />
+                <div className="flex items-center justify-between">
+                  <Label className="text-sm font-semibold text-neutral-200">
+                    Nombre de la Canción / Artista
+                  </Label>
+                  {musicUrl && (
+                    <button
+                      type="button"
+                      onClick={() => fetchSongTitle(musicUrl)}
+                      disabled={isFetchingMusicInfo}
+                      className="inline-flex items-center gap-1.5 text-xs text-amber-400 hover:text-amber-300 transition-colors disabled:opacity-50 cursor-pointer"
+                      title="Detectar nombre automáticamente desde el enlace"
+                    >
+                      {isFetchingMusicInfo ? (
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      ) : (
+                        <RefreshCw className="w-3.5 h-3.5" />
+                      )}
+                      <span>{isFetchingMusicInfo ? 'Detectando nombre...' : 'Detectar automáticamente'}</span>
+                    </button>
+                  )}
+                </div>
+                <div className="relative">
+                  <Input
+                    value={musicTitle}
+                    onChange={(e) => setMusicTitle(e.target.value)}
+                    placeholder="Ej: A Thousand Years — Christina Perri"
+                    className="bg-neutral-950/80 border-neutral-800 text-sm h-11 rounded-xl pr-10"
+                  />
+                  {isFetchingMusicInfo && (
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 text-amber-400">
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    </div>
+                  )}
+                </div>
                 <p className="text-[11px] text-neutral-500">
-                  Es el título que se mostrará en el botón flotante de la invitación.
+                  Se detecta de forma automática al cargar el link o archivo, y podés editarlo cuando quieras.
                 </p>
               </div>
 
@@ -1166,7 +1234,7 @@ export function EventEditorStudio({ event, templates, clients = [] }: EventEdito
                     <div>
                       <h4 className="text-sm font-semibold text-neutral-200">Subir archivo de audio desde tu computadora</h4>
                       <p className="text-xs text-neutral-400 mt-1">
-                        Formatos soportados: MP3, WAV, M4A o AAC (hasta 50 MB).
+                        Formatos soportados: MP3, WAV, M4A o AAC (hasta 50 MB). El nombre se completará automáticamente.
                       </p>
                     </div>
                   </div>
@@ -1195,7 +1263,7 @@ export function EventEditorStudio({ event, templates, clients = [] }: EventEdito
                         Canción desde YouTube (Solo Audio)
                       </h4>
                       <p className="text-xs text-neutral-400 mt-1">
-                        Pegá cualquier enlace de video o canción de YouTube. En la tarjeta sonará únicamente el audio en bucle sin mostrar el video.
+                        Pegá cualquier enlace de YouTube. El título se cargará automáticamente y en la tarjeta sonará el audio de fondo sin mostrar video.
                       </p>
                     </div>
                   </div>
@@ -1207,8 +1275,14 @@ export function EventEditorStudio({ event, templates, clients = [] }: EventEdito
                         const val = e.target.value;
                         setMusicUrl(val);
                         const p = parseAudioSource(val);
-                        if (p.type === 'youtube' && (!musicTitle || musicTitle.includes('A Thousand Years'))) {
-                          setMusicTitle('Tema musical de YouTube');
+                        if (p.type === 'youtube') {
+                          fetchSongTitle(val);
+                        }
+                      }}
+                      onPaste={(e) => {
+                        const pasted = e.clipboardData.getData('text');
+                        if (pasted) {
+                          fetchSongTitle(pasted);
                         }
                       }}
                       placeholder="https://www.youtube.com/watch?v=... o https://youtu.be/..."
@@ -1220,7 +1294,7 @@ export function EventEditorStudio({ event, templates, clients = [] }: EventEdito
                     <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs flex items-center gap-2.5">
                       <CheckCircle2 className="w-4 h-4 shrink-0" />
                       <span>
-                        Enlace de YouTube válido detectado (ID: <strong className="font-mono">{parsedMusic.youtubeId}</strong>). La música sonará en segundo plano.
+                        Enlace de YouTube detectado (ID: <strong className="font-mono">{parsedMusic.youtubeId}</strong>).
                       </span>
                     </div>
                   ) : musicUrl ? (
@@ -1254,8 +1328,14 @@ export function EventEditorStudio({ event, templates, clients = [] }: EventEdito
                         const val = e.target.value;
                         setMusicUrl(val);
                         const p = parseAudioSource(val);
-                        if (p.type === 'drive' && (!musicTitle || musicTitle.includes('A Thousand Years'))) {
-                          setMusicTitle('Canción desde Google Drive');
+                        if (p.type === 'drive') {
+                          fetchSongTitle(val);
+                        }
+                      }}
+                      onPaste={(e) => {
+                        const pasted = e.clipboardData.getData('text');
+                        if (pasted) {
+                          fetchSongTitle(pasted);
                         }
                       }}
                       placeholder="https://drive.google.com/file/d/1X-example-id/view?usp=sharing"
@@ -1288,7 +1368,17 @@ export function EventEditorStudio({ event, templates, clients = [] }: EventEdito
                     <Label className="text-sm font-semibold text-neutral-200">URL Directa del Archivo de Audio</Label>
                     <Input
                       value={musicUrl}
-                      onChange={(e) => setMusicUrl(e.target.value)}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setMusicUrl(val);
+                        fetchSongTitle(val);
+                      }}
+                      onPaste={(e) => {
+                        const pasted = e.clipboardData.getData('text');
+                        if (pasted) {
+                          fetchSongTitle(pasted);
+                        }
+                      }}
                       placeholder="https://.../cancion.mp3"
                       className="bg-neutral-900 border-neutral-700 text-xs font-mono h-11 rounded-xl text-neutral-100"
                     />
