@@ -44,13 +44,16 @@ export function MusicPlayer({ theme, event, data }: MusicPlayerProps) {
     if (parsedSource.type !== 'youtube' || !parsedSource.youtubeId) return;
 
     let isMounted = true;
+    let pollTimer: NodeJS.Timeout | null = null;
 
-    function initYouTube() {
-      if (!window.YT || !window.YT.Player) return;
+    function createPlayer() {
+      if (!isMounted || !window.YT || !window.YT.Player) return;
 
       try {
         if (ytPlayerRef.current) {
-          ytPlayerRef.current.destroy();
+          try {
+            ytPlayerRef.current.destroy();
+          } catch {}
         }
 
         ytPlayerRef.current = new window.YT.Player(ytContainerId, {
@@ -89,6 +92,9 @@ export function MusicPlayer({ theme, event, data }: MusicPlayerProps) {
                 setIsPlaying(false);
               }
             },
+            onError: (e: any) => {
+              console.warn('YouTube player error:', e.data);
+            },
           },
         });
       } catch (err) {
@@ -96,9 +102,11 @@ export function MusicPlayer({ theme, event, data }: MusicPlayerProps) {
       }
     }
 
-    if (!window.YT) {
-      const existingScript = document.querySelector('script[src="https://www.youtube.com/iframe_api"]');
-      if (!existingScript) {
+    if (window.YT && window.YT.Player) {
+      createPlayer();
+    } else {
+      // Ensure API script is injected
+      if (!document.querySelector('script[src*="youtube.com/iframe_api"]')) {
         const tag = document.createElement('script');
         tag.src = 'https://www.youtube.com/iframe_api';
         tag.async = true;
@@ -107,15 +115,22 @@ export function MusicPlayer({ theme, event, data }: MusicPlayerProps) {
 
       const prevCallback = window.onYouTubeIframeAPIReady;
       window.onYouTubeIframeAPIReady = () => {
-        if (prevCallback) prevCallback();
-        if (isMounted) initYouTube();
+        if (typeof prevCallback === 'function') prevCallback();
+        if (isMounted) createPlayer();
       };
-    } else {
-      initYouTube();
+
+      // Resilient interval check in case onYouTubeIframeAPIReady fired before listener attached
+      pollTimer = setInterval(() => {
+        if (window.YT && window.YT.Player && isMounted) {
+          if (pollTimer) clearInterval(pollTimer);
+          createPlayer();
+        }
+      }, 200);
     }
 
     return () => {
       isMounted = false;
+      if (pollTimer) clearInterval(pollTimer);
       if (ytPlayerRef.current) {
         try {
           ytPlayerRef.current.destroy();
@@ -224,11 +239,11 @@ export function MusicPlayer({ theme, event, data }: MusicPlayerProps) {
 
   return (
     <>
-      {/* Invisible YouTube IFrame Container - Off-screen and silent to visual layout */}
+      {/* Invisible YouTube IFrame Container - In-viewport but 0-opacity and 1px so browsers do not throttle */}
       {parsedSource.type === 'youtube' && (
         <div
           id={ytContainerId}
-          className="fixed -top-[9999px] -left-[9999px] w-1 h-1 pointer-events-none opacity-0 overflow-hidden"
+          className="fixed bottom-0 right-0 w-[1px] h-[1px] pointer-events-none opacity-0 overflow-hidden z-[-1]"
           aria-hidden="true"
         />
       )}

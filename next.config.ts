@@ -2,13 +2,14 @@ import type { NextConfig } from 'next';
 
 const cspHeader = `
   default-src 'self';
-  script-src 'self' 'unsafe-eval' 'unsafe-inline' https://*.supabase.co;
+  script-src 'self' 'unsafe-eval' 'unsafe-inline' https://*.supabase.co https://www.youtube.com https://s.ytimg.com https://www.google.com;
   style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
   font-src 'self' https://fonts.gstatic.com;
-  img-src 'self' data: blob: https://*.supabase.co https://images.unsplash.com https://maps.googleapis.com https://maps.gstatic.com;
-  media-src 'self' https://*.supabase.co;
-  connect-src 'self' https://*.supabase.co wss://*.supabase.co;
-  frame-src 'self' https://www.google.com https://maps.google.com;
+  img-src 'self' data: blob: https://*.supabase.co https://images.unsplash.com https://maps.googleapis.com https://maps.gstatic.com https://i.ytimg.com https://*.ytimg.com https://*.googleusercontent.com;
+  media-src 'self' blob: data: https://*.supabase.co https://drive.google.com https://*.googleusercontent.com https://*.googlevideo.com;
+  connect-src 'self' https://*.supabase.co wss://*.supabase.co https://www.youtube.com https://*.google.com https://*.googleusercontent.com https://*.googlevideo.com;
+  frame-src 'self' https://www.google.com https://maps.google.com https://www.youtube.com https://www.youtube-nocookie.com;
+  child-src 'self' blob: https://www.youtube.com https://www.youtube-nocookie.com;
   object-src 'none';
   base-uri 'self';
   form-action 'self';
