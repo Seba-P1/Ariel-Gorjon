@@ -91,11 +91,6 @@ export function InvitationWelcomeCover({
             />
           )}
 
-          {/* Decorative Corner Borders */}
-          <div
-            className="absolute inset-4 sm:inset-8 border rounded-3xl pointer-events-none opacity-25"
-            style={{ borderColor: theme.palette.primary }}
-          />
 
           {/* Content Card / Envelope Aesthetic */}
           <motion.div
