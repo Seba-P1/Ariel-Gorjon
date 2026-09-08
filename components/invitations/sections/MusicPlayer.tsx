@@ -38,6 +38,55 @@ export function MusicPlayer({ theme, event, data }: MusicPlayerProps) {
   const audioRef = React.useRef<HTMLAudioElement | null>(null);
   const ytPlayerRef = React.useRef<any>(null);
   const ytContainerId = React.useId().replace(/:/g, '_') + '_yt_player';
+  const userInteractedRef = React.useRef<boolean>(false);
+
+  // Preconnect to YouTube for faster asset resolution
+  React.useEffect(() => {
+    if (parsedSource.type === 'youtube') {
+      const domains = [
+        'https://www.youtube.com',
+        'https://www.youtube-nocookie.com',
+        'https://i.ytimg.com',
+      ];
+      domains.forEach((href) => {
+        if (!document.querySelector(`link[rel="preconnect"][href="${href}"]`)) {
+          const link = document.createElement('link');
+          link.rel = 'preconnect';
+          link.href = href;
+          link.crossOrigin = 'anonymous';
+          document.head.appendChild(link);
+        }
+      });
+    }
+  }, [parsedSource.type]);
+
+  // Unified Playback Starter
+  const startPlayback = React.useCallback(() => {
+    userInteractedRef.current = true;
+    if (userMuted) return;
+
+    if (parsedSource.type === 'youtube') {
+      if (ytPlayerRef.current) {
+        try {
+          ytPlayerRef.current.unMute();
+          ytPlayerRef.current.setVolume(100);
+          ytPlayerRef.current.playVideo();
+        } catch (err) {
+          console.warn('YouTube start playback attempt:', err);
+        }
+      }
+    } else if (audioRef.current) {
+      audioRef.current
+        .play()
+        .then(() => {
+          setIsPlaying(true);
+          setHasStartedOnce(true);
+        })
+        .catch((err) => {
+          console.warn('HTML5 Audio play attempt:', err);
+        });
+    }
+  }, [parsedSource.type, userMuted]);
 
   // 1. YouTube Player Engine
   React.useEffect(() => {
@@ -78,8 +127,12 @@ export function MusicPlayer({ theme, event, data }: MusicPlayerProps) {
                 e.target.unMute();
                 e.target.setVolume(100);
                 e.target.playVideo();
+                // If user already interacted or browser allows it, ensure unmuted
+                if (userInteractedRef.current) {
+                  e.target.playVideo();
+                }
               } catch (err) {
-                console.warn('YouTube autoplay attempt:', err);
+                console.warn('YouTube autoplay onReady attempt:', err);
               }
             },
             onStateChange: (e: any) => {
@@ -119,13 +172,13 @@ export function MusicPlayer({ theme, event, data }: MusicPlayerProps) {
         if (isMounted) createPlayer();
       };
 
-      // Resilient interval check in case onYouTubeIframeAPIReady fired before listener attached
+      // Interval fallback check
       pollTimer = setInterval(() => {
         if (window.YT && window.YT.Player && isMounted) {
           if (pollTimer) clearInterval(pollTimer);
           createPlayer();
         }
-      }, 200);
+      }, 150);
     }
 
     return () => {
@@ -148,6 +201,7 @@ export function MusicPlayer({ theme, event, data }: MusicPlayerProps) {
     const audio = new Audio(parsedSource.resolvedUrl);
     audio.loop = true;
     audio.volume = 1.0;
+    audio.preload = 'auto';
     audioRef.current = audio;
 
     const onPlay = () => {
@@ -159,7 +213,7 @@ export function MusicPlayer({ theme, event, data }: MusicPlayerProps) {
     audio.addEventListener('play', onPlay);
     audio.addEventListener('pause', onPause);
 
-    // Initial Autoplay Attempt
+    // Attempt immediate start
     const playPromise = audio.play();
     if (playPromise !== undefined) {
       playPromise.catch(() => {
@@ -176,35 +230,30 @@ export function MusicPlayer({ theme, event, data }: MusicPlayerProps) {
     };
   }, [parsedSource.type, parsedSource.resolvedUrl]);
 
-  // 3. Global Autoplay Unlock Listener on First User Interaction
+  // 3. Audio Unlock Listeners - Persists until audio is confirmed playing
   React.useEffect(() => {
     if (isPlaying || userMuted || !parsedSource.isValid) return;
 
-    const unlockPlayback = () => {
-      if (userMuted) return;
-
-      if (parsedSource.type === 'youtube' && ytPlayerRef.current) {
-        try {
-          ytPlayerRef.current.unMute();
-          ytPlayerRef.current.setVolume(100);
-          ytPlayerRef.current.playVideo();
-        } catch {}
-      } else if (audioRef.current) {
-        audioRef.current.play().catch(() => {});
-      }
+    const handleInteraction = () => {
+      startPlayback();
     };
 
-    const interactionEvents = ['pointerdown', 'touchstart', 'scroll', 'keydown'];
+    // Custom event dispatched from InvitationWelcomeCover or elsewhere
+    window.addEventListener('invitation:play', handleInteraction);
+
+    // Global tactile events to unlock audio on first touch anywhere on screen
+    const interactionEvents = ['click', 'touchstart', 'pointerdown'];
     interactionEvents.forEach((evt) => {
-      window.addEventListener(evt, unlockPlayback, { once: true, passive: true });
+      window.addEventListener(evt, handleInteraction, { passive: true });
     });
 
     return () => {
+      window.removeEventListener('invitation:play', handleInteraction);
       interactionEvents.forEach((evt) => {
-        window.removeEventListener(evt, unlockPlayback);
+        window.removeEventListener(evt, handleInteraction);
       });
     };
-  }, [isPlaying, userMuted, parsedSource]);
+  }, [isPlaying, userMuted, parsedSource.isValid, startPlayback]);
 
   if (!parsedSource.isValid) return null;
 
@@ -224,6 +273,7 @@ export function MusicPlayer({ theme, event, data }: MusicPlayerProps) {
     } else {
       // User requested Play / Unmute
       setUserMuted(false);
+      userInteractedRef.current = true;
       if (parsedSource.type === 'youtube' && ytPlayerRef.current) {
         try {
           ytPlayerRef.current.unMute();
@@ -239,11 +289,11 @@ export function MusicPlayer({ theme, event, data }: MusicPlayerProps) {
 
   return (
     <>
-      {/* Invisible YouTube IFrame Container - In-viewport but 0-opacity and 1px so browsers do not throttle */}
+      {/* Invisible YouTube IFrame Container - Sized and styled to prevent mobile iframe throttling */}
       {parsedSource.type === 'youtube' && (
         <div
           id={ytContainerId}
-          className="fixed bottom-0 right-0 w-[1px] h-[1px] pointer-events-none opacity-0 overflow-hidden z-[-1]"
+          className="fixed bottom-0 right-0 w-[200px] h-[200px] pointer-events-none opacity-[0.01] overflow-hidden z-[-50]"
           aria-hidden="true"
         />
       )}

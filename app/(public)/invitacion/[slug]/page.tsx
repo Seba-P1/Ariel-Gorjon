@@ -99,10 +99,16 @@ export default async function InvitationPage({
   }
 
   return (
-    <InvitationRenderer
-      event={event}
-      template={template}
-      guest={guest}
-    />
+    <>
+      <link rel="preconnect" href="https://www.youtube.com" />
+      <link rel="preconnect" href="https://www.youtube-nocookie.com" />
+      <link rel="preconnect" href="https://i.ytimg.com" />
+      <link rel="preconnect" href="https://googleads.g.doubleclick.net" />
+      <InvitationRenderer
+        event={event}
+        template={template}
+        guest={guest}
+      />
+    </>
   );
 }

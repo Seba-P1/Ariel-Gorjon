@@ -22,6 +22,7 @@ import {
   Trivia,
   LiveAlbumQr,
 } from './sections';
+import { InvitationWelcomeCover } from './InvitationWelcomeCover';
 
 interface InvitationRendererProps {
   event: Event;
@@ -32,6 +33,7 @@ interface InvitationRendererProps {
 export function InvitationRenderer({ event, template, guest }: InvitationRendererProps) {
   // 1. Resolve active theme
   const rawThemeConfig = (event.theme_config as Record<string, any>) || (template?.default_theme as Record<string, any>) || {};
+  const [isCoverOpen, setIsCoverOpen] = React.useState(rawThemeConfig.welcome_cover === false);
 
   const theme = React.useMemo(() => {
     const templateSlug = template?.slug || (event as any).template_slug;
@@ -233,6 +235,18 @@ export function InvitationRenderer({ event, template, guest }: InvitationRendere
       <main id="invitation-content" className="relative z-10 space-y-8 pb-20">
         {sections.map((section: SectionConfig) => renderSection(section))}
       </main>
+
+      {/* Welcome Cover / Envelope Overlay */}
+      {rawThemeConfig.welcome_cover !== false && (
+        <InvitationWelcomeCover
+          theme={theme}
+          event={event}
+          guest={guest}
+          songTitle={musicData?.songTitle || (event.theme_config as any)?.music_title}
+          isOpen={isCoverOpen}
+          onOpen={() => setIsCoverOpen(true)}
+        />
+      )}
 
       {/* Floating Ambient Music Player */}
       {isMusicActive && (
